@@ -6,7 +6,7 @@
 using namespace std;
 
 enum Type {
-	ENTITY, ROOM, ITEM, EXIT, CREATURE, PLAYER
+	ENTITY, ROOM, ITEM, EXITS, CREATURE, PLAYER
 };
 
 class Entity
@@ -19,13 +19,21 @@ public:
 
 	Entity* CheckifContains(string name);
 
+	Entity* GetParent();
+	void SetParent(Entity* parent);
+
+	list<Entity*> Getcontent();
+
 	string GetDescription();
+	void SetDescription(string description);
 
 	string GetName();
 
 
+
 	string name;
 	Type type;
+	bool accesibleContent;
 
 protected:
 

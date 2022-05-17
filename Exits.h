@@ -9,8 +9,10 @@ public:
     Exits(const char* name, const char* description, Room* origin, Room* destination, const char* goAction);
     Room* GetDestination(Room* actualroom);
     string GetGoActionDescription();
-private:
+
     bool lock;
+
+private:
     Room* destination;
     string goAction;
 };

@@ -2,10 +2,12 @@
 
 Exits::Exits(const char* name, const char* description, Room* origin, Room* destination, const char* goAction) : Entity(name, description, (Entity*)origin) {
 	
-	type = EXIT;
+	type = EXITS;
 	
+	this->lock = false;
 	this->destination = destination;
 	destination->AddChild(this);
+	this->parent = origin;
 
 	this->goAction = goAction;
 }
