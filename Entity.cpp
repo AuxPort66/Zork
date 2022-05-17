@@ -26,7 +26,7 @@ Entity* Entity::CheckifContains(string name) {
 	if (accesibleContent) {
 		for (auto const& child : content) {
 			if (child->name == name) return child;
-			else if (child->Getcontent().size() > 0) {
+			else if (child->Getcontent().size() > 0 && child->type != PLAYER) {
 				Entity* entityfound = child->CheckifContains(name);
 				if (entityfound != NULL) return entityfound;
 			}

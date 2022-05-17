@@ -34,6 +34,7 @@ void World::Start() {
 	Look("Room");
 }
 
+
 void World::ParseAction(vector<string> args) {
 
 	if (args[0] == "Go") {
@@ -74,7 +75,7 @@ void World::Use(string nameObjectUsed, string nameObjectUsedOn) {
 				cout << "Can you explain to me how you will use that, exactly?" << endl;
 			}
 		}
-		Item* itemUsed = (Item*)player->CheckifContains(nameObjectUsed);
+		itemUsed = (Item*)player->CheckifContains(nameObjectUsed);
 		if (itemUsed != NULL) {
 			if (itemUsed->type == ITEM) {
 				itemUsed->UseItem();
