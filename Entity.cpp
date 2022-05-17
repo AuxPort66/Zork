@@ -15,12 +15,17 @@ void Entity::AddChild(Entity* child) {
 	content.push_back(child);
 }
 
+void Entity::RemoveChild(Entity* child) {
+	content.remove(child);	
+}
+
 Entity* Entity::CheckifContains(string name) {
-	for (int i = 0; i < content.size(); i++) {
-		if (content[i]->name == name) {
-			return content[i];
-		}
+
+
+	for (auto const& child : content) {
+		if (child->name == name) return child;
 	}
+
 	return NULL;
 }
 

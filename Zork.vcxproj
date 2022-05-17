@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Exits.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="Zork.cpp" />
@@ -148,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Exits.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>

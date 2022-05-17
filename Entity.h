@@ -15,6 +15,8 @@ public:
 	Entity(const char* name, const char* description, Entity* parent);
 	void AddChild(Entity* child);
 
+	void RemoveChild(Entity* child);
+
 	Entity* CheckifContains(string name);
 
 	string GetDescription();
@@ -32,7 +34,7 @@ protected:
 	string description;
 
 	Entity* parent;
-	vector<Entity*> content;
+	list<Entity*> content;
 
 };
 
