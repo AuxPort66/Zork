@@ -16,7 +16,7 @@ public:
 	void Start();
 	void ParseAction(vector<string> args);
 	void Use(string nameObjectUsed, string nameObjectUsedOn);
-	void Look(string name);
+	void Examine(string name);
 	void Go(string destino);
 	void Pick(string name);
 	void Drop(string name);

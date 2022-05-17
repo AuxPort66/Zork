@@ -31,8 +31,10 @@ void World::Start() {
 	player->ChangeStat(DEFENSE, 3);
 
 
-	Look("Room");
+	Examine("Room");
 }
+
+
 
 
 void World::ParseAction(vector<string> args) {
@@ -41,9 +43,9 @@ void World::ParseAction(vector<string> args) {
 		if (args.size() > 1) Go(args[1]);
 		else cout << "Go where? Dumb dumb" << endl;
 	}
-	else if (args[0] == "Look") {
-		if (args.size() == 1) Look("Room");
-		else Look(args[1]);
+	else if (args[0] == "Examine" || args[0] == "Look") {
+		if (args.size() == 1) Examine("Room");
+		else Examine(args[1]);
 	}
 	else if (args[0] == "Pick" || args[0] == "Take") {
 		if (args.size() > 1) Pick(args[1]);
@@ -92,7 +94,7 @@ void World::Use(string nameObjectUsed, string nameObjectUsedOn) {
 	}
 }
 
-void World::Look(string name) {
+void World::Examine(string name) {
 
 	if (name == "Room") {
 		cout << "Look around you, you're in:" << endl;
@@ -113,7 +115,15 @@ void World::Look(string name) {
 		}
 		else
 		{
-			cout << "The what?" << endl;
+			Entity* target = player->CheckifContains(name);
+
+			if (target != NULL) {
+				cout << target->GetDescription() << endl;
+			}
+			else
+			{
+				cout << "The what? You don't have that. Look again your Inventory." << endl;
+			}
 		}
 	}
 }
