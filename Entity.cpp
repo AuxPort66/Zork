@@ -7,6 +7,9 @@ Entity::Entity(const char* name, const char* description, Entity* parent) {
 	this->accesibleContent = true;
 	this->reachable = true;
 
+	this->dropped = false;
+	this->havedropped = 0;
+
 	if (parent != NULL) {
 		parent->AddChild(this);
 		this->parent = parent;

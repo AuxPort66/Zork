@@ -20,12 +20,11 @@ void World::Start()
 
 void World::ChargeData() {
 
-
-	Room* initialroom = new Room("Hab1", NULL, "Una habitación normal y corriente, tiene una puerta. Cuando examinas un poco mas ves que tiene un \033[1;33magujero\033[0m en una de las paredes");
-	Room* secondroom = new Room("Hab2", NULL, "Una habitación menos normal y corriente, tiene una puerta");
-
-	wholeExistance.push_back(initialroom);
-	wholeExistance.push_back(secondroom);
+	Room* lounge = new Room("Lounge", NULL, "A ordinary but messy living room, the light enters through a single window and the wooden floor creaks with each step. In the center of the room is a sturdy wooden \033[1;33mtable\033[0m accompanied by an old green \033[1;33msofa\033[0m. Next to it is an almost empty \033[1;33bookcase\033[0m and a small bedside table with something hidden under a \033[1;33msheet\033[0m. There are two doors, a \033[1;33mbig\033[0m door at the east of the room and a \033[1;33msmall\033[0m one white door next to the bookcase. Smells of tobacco.");
+	Room* bathroom = new Room("Bathroom", NULL, "A shabby bathroom, the tiles are a bit dirty and it smells musty, but somehow it's not the worst area of the house. There is a \033[1;33m sink \033[0m with some used \033[1;33mcandles\033[0m] c, a \033[1;33m mirror \033[0m covered with a garbage bag and gray \033[1;33m closet \033[0m. And a \033[1;33m small \033[0m door to the Lounge ");
+	Room* kitchen = new Room("Kitchen", NULL, "A spacious, bright kitchen with a large white \033[1;33mfridge\033[0m in one corner and a much cleaner countertop than the rest of the house. A\033[1;33m big \033[0m door to the Lounge. And even the \033[1;33m trash \033[0m bin appears to be tidy and empty. It would be fantastic if it weren't for the fact that in the middle of the room there is the \033[1;33mcorpse\033[0m of what looks like a middle-aged man.");
+	Room* basement = new Room("Basement", NULL, "It's too dark to see anything");
+	basement->accesibleContent = false;
 
 	player = new Player("Blake", actualRoom, "A person, I guess");
 	player->ChangeStat(Stats::PERCEPTION, 1);
@@ -34,83 +33,238 @@ void World::ChargeData() {
 
 	wholeExistance.push_back(player);
 
+	wholeExistance.push_back(lounge);
+	wholeExistance.push_back(bathroom);
+	wholeExistance.push_back(kitchen);
+	wholeExistance.push_back(basement);
 
-	Exits* exits = new Exits("Door", initialroom, secondroom, "Door between Hab1 and Hab2");
-	exits->SetGoActionDescription("Usaste la puerta, hizo algo de ruido pero nada preocupante");
-	exits->lock = true;
+	Exits* kitchenDoor = new Exits("Big",lounge,kitchen,"There is a \033[1;33m big\033[0m door in the middle of the wall, it has a knob but no lock and it seems to lead into the kitchen.");
+	kitchenDoor->SetGoActionDescription("You went through the big door");
+	Exits* bathroomDoor = new Exits("Small",lounge,bathroom,"There is a \033[1;33m small\033[0m door on the side of the wall, next to the \033[1;33m bookcase\033[0m. It is painted white and it's mid open, it seems to lead to the bathroom");
+	bathroomDoor->SetGoActionDescription("You went through the small door");
 
-	wholeExistance.push_back(exits);
+	wholeExistance.push_back(kitchenDoor);
+	wholeExistance.push_back(bathroomDoor);
 
-	Item* item = new Item("Agujero", initialroom,"Es un agujero, parece que puedes meter la mano por él pero no se si quieras... Ademas parece bastante profundo. Aunque al fondo creo que hay una especie de medallon");
-	item->SetPickupActionDescription("Como vas a coger un agujero?");
-	item->pickable = false;
+	Item* tableLounge = new Item("Table",lounge,"A large wooden table with some dust, it has only a red \033[1;33m book\033[0m on it. It seems that it has some papers inside and it is the cleanest thing in the place");
+	tableLounge->pickable = false;
 
-	Item* item2 = new Item("Carne", initialroom,"Es un trozo de carne que sacaste de la nevera, lo unico que quedaba dentro la verdad");
-	item2->SetPickupActionDescription("Coges el trozo de carne, está a medio telediario de ya no ser comestible pero quizas te sirve pa algo");
-	item2->dropable = false;
-	item2->lostOnUse = true;
+	Item* book = new Item("Book", tableLounge, "A red \033[1;33m book\033[0m with a couple of papers inside, in one of them you can see a draw, two triangles forming an hourglass.");
+	book->usedWhenPick = true;
 
-	Item* item3 = new Item("Medallon", item,"Medallon triangular, parece contener algo dentro");
-	item3->SetPickupActionDescription("No llegas al medallón, esta demasiado a dentro del agujero");
-	item3->accesibleContent = false;
-	item3->reachable = false;
-	
+	Action* pickBook = new Action(book, "You pick up the book");
+	ItemConsecuences* clearTable = new ItemConsecuences((Entity*)tableLounge, false, "", "A large wooden table with some dust");
+	pickBook->Addconsecuence(clearTable);
 
-	ItemConsecuences* action = new ItemConsecuences((Entity*)item3, true);
-	action->reversible = false;
-	Action* actionswhenUse = new Action(item3, "Tras darle un par de vueltas encuentras el cierre del medallon y lo abres");
-	actionswhenUse->Addconsecuence(action);
-	actionswhenUse->positionofusedOn = (Entity*)exits;
+	book->AddAction(pickBook);
 
-	Action* actionswhenUseOnDoor = new Action(exits, "Colocaste el medallón en la puerta, y esta hizo un click");
-	ItemConsecuences* action2 = new ItemConsecuences(exits, true);
-	ItemConsecuences* action2_1 = new ItemConsecuences((Entity*)item3,exits,true);
-	actionswhenUseOnDoor->Addconsecuence(action2);
-	actionswhenUseOnDoor->Addconsecuence(action2_1);
+	Item* bookcase = new Item("Bookcase",lounge, "An almost empty shelf, has a couple of misplaced books and anything else");
+	bookcase->pickable = false;
 
-	item3->AddAction(actionswhenUse);
-	item3->AddAction(actionswhenUseOnDoor);
-	
-	Item* item4 = new Item("Foto", item3, "Es una foto algo gastada que estaba dentro del medallón.");
-	item4->SetPickupActionDescription("Sacas la foto del medallón y te la guardas en el bolsillo");
-	
-	wholeExistance.push_back(item);
-	wholeExistance.push_back(item2);
-	wholeExistance.push_back(item3);
-	wholeExistance.push_back(item4);
+	wholeExistance.push_back(tableLounge);
+	wholeExistance.push_back(bookcase);
 
-	Npc* npc1 = new Npc("Bird", "A gray owl, it seems quite calm and is not bothered by your presence. She ignores you meanwhile preens her feathers and if you stare at her  enough time you see her turning her head in a funny way. Owl's things.", initialroom);
-	
+
+	Item* sheet = new Item("Sheet", lounge, "A \033[1;33m sheet\033[0m thrown over what looks like an open cage. You can hear some very slight noises inside.");
+	sheet->SetPickupActionDescription("You fold the sheet and pick it up, although you don't think it will do much.");
+	sheet->usedWhenPick = true;
+	sheet->accesibleContent = false;
+
+	wholeExistance.push_back(sheet);
+
+	Item* fridge = new Item("Fridge", kitchen, "An almost empty fridge. It has a peace of \033[1;33m meat\033[0m, a \033[1;33m pizza\033[0m and a \033[1;33m bottle\033[0m");
+	fridge->pickable = false;
+
+	Item* meat = new Item("Meat", fridge, "It's a piece of \033[1;33m meat\033[0m that you took out of the fridge, the only thing that was left inside");
+	meat->SetPickupActionDescription("You take the piece of meat, it's half day from not being edible anymore, but maybe it's useful for something");
+	meat->dropable = false;
+	meat->lostOnUse = true;
+
+	Item* pizza = new Item("Pizza", fridge, "It's a piece of pineapple \033[1;33m pizza\033[0m...uhg");
+	pizza->SetPickupActionDescription("You take the pizza, because it doesn't even deserve to be in the fridge");
+	pizza->dropable = true;
+
+	Item* bottle = new Item("Bottle", fridge, "It's a \033[1;33m bottle\033[0m with some water");
+	bottle->SetPickupActionDescription("You take the water, maybe it's usefull");
+	bottle->dropable = false;
+
+
+	Item* trash = new Item("Trash", kitchen, "A trash bin");
+	trash->pickable = false;
+
+	Item* corpse = new Item("Corpse", kitchen, "The body of a middle-aged man. He appears to have a lighter in his pocket. He has a claw-shaped wound on his neck, the outline is bluish. His hands are stained with something gray, like ash or dust.");
+	corpse->pickable = false;
+
+	Item* lighter = new Item("Lighter", corpse, "A red lighter, a cheap one");
+	lighter->dropable = false;
+
+
+	Item* sink = new Item("Sink", bathroom, "A sink it have a couple of used \033[1;33m candles\033[0m");
+	sink->pickable = false;
+
+	Item* candle = new Item("Candle", sink, "The only candle that can still be lit");
+	candle->usedWhenPick = true;
+	candle->dropable = false;
+
+	Action* pickCandle = new Action(candle, "You pick up the unique candle that can still be lit");
+	ItemConsecuences* clearSink = new ItemConsecuences((Entity*)sink, false);
+	pickCandle->Addconsecuence(clearSink);
+	candle->AddAction(pickCandle);
+
+	Action* litCandle = new Action(candle, "You lit the unique candle that can still be lit");
+	ItemConsecuences* candletoInventory = new ItemConsecuences((Entity*)candle, player, false);
+	ItemConsecuences* candleDescription = new ItemConsecuences((Entity*)candle, false, "", "A lit candle, now you can see everything! Which is not good considering the state of this house");
+	ItemConsecuences* basementLight = new ItemConsecuences((Entity*)basement, false);
+	ItemConsecuences* basementDescription = new ItemConsecuences((Entity*)basement, false, "", "/*TODO*/ Description Basement full");
+	litCandle->Addconsecuence(clearSink);
+	litCandle->Addconsecuence(candletoInventory);
+	litCandle->Addconsecuence(candleDescription);
+	litCandle->Addconsecuence(basementLight);
+	litCandle->Addconsecuence(basementDescription);
+
+	lighter->AddAction(litCandle);
+
+	Item* mirror = new Item("Mirror", bathroom, "A mirror covered with a garbage bag");
+	mirror->pickable = false;
+
+	Action* useMirror = new Action(mirror, "You remove the garbage bag");
+	ItemConsecuences* clearMirror = new ItemConsecuences((Entity*)mirror, false,"", "A normal mirror");
+	useMirror->Addconsecuence(clearMirror);
+	mirror->AddAction(useMirror);
+
+	Item* closet = new Item("Closet", bathroom, "A closet, the top looks scratched. When you look out you see a \033[1;33m hole\033[0m in the wall.");
+	closet->pickable = false;
+
+	Item* hole = new Item("Hole", closet, "It's a hole, it looks like you can put your hand through it but I don't know if you want to... It also seems pretty deep. Although in the background I think there is a kind of \033[1;33m medallion\033[0m but you don't reach");
+	hole->pickable = false;
+	hole->SetPickupActionDescription("How can you pick up a hole?");
+
+	Item* sofa = new Item("Sofa", lounge, "An old green \033[1;33m sofa\033[0m, next to it there are marks on the floor, as if it had been dragged.");
+
+	wholeExistance.push_back(sofa);
+
+	Exits* hatch = new Exits("Hatch", lounge, basement, "A hatch under the \033[1;33m sofa\033[0m, it has a lock but it has a very strange triangular shape.It has like ash traces on the edges");
+	hatch->SetParent(sofa);
+	hatch->SetGoActionDescription("You opened the hatch letting some light into the basement, but not enough to see anything beyond the stairs down");
+	hatch->lock = true;
+
+	wholeExistance.push_back(hatch);
+
+	ItemConsecuences* freeHatch = new ItemConsecuences((Entity*)hatch, lounge, false);
+	Action* useSofa = new Action(sofa, "You move the sofa and discover a \033[1;33m hatch\033[0m on the floor.");
+	useSofa->Addconsecuence(freeHatch);
+
+	sofa->AddAction(useSofa);
+
+
+	Item* medallion = new Item("Medallion", hole, "Triangular medallion, seems to contain something inside");
+	medallion->SetPickupActionDescription("You don't get to the medallion, it's too far into the hole");
+	medallion->accesibleContent = false;
+	medallion->reachable = false;
+
+	ItemConsecuences* useMedallion = new ItemConsecuences((Entity*)medallion, true);
+	useMedallion->reversible = false;
+	Action* openMedallion = new Action(medallion, "After giving it a couple of turns you find the closure of the medallion and open it. It has a \033[1;33m photo\033[0m");
+	openMedallion->Addconsecuence(useMedallion);
+
+	Action* putMedalliononHatch = new Action(hatch, "You placed the medallion on the hatch, and it clicked.");
+	ItemConsecuences* action2 = new ItemConsecuences(hatch, true);
+	ItemConsecuences* action2_1 = new ItemConsecuences((Entity*)medallion, hatch, true);
+	putMedalliononHatch->Addconsecuence(action2);
+	putMedalliononHatch->Addconsecuence(action2_1);
+
+	medallion->AddAction(openMedallion);
+	medallion->AddAction(putMedalliononHatch);
+
+	Item* photo = new Item("Photo", medallion, "It's a slightly worn photo that was inside the locket. A middle-aged man, similar to the one in the kitchen. Although the photo looks too old");
+	photo->pickable = false;
+
+	Npc* owl = new Npc("Owl", "A gray owl, it seems quite calm and is not bothered by your presence. She ignores you meanwhile preens her feathers and if you stare at her  enough time you see her turning her head in a funny way. Owl's things.", sheet);
+
 	Interaction* interaction = new Interaction(NULL);
-	interaction->AddDialogue("El ave te mira cuando le dices hola, no está muy seguro de lo que pasa pero hace un pequeño ruido gutural hinchando el pecho. Parece querer decir que es mejor que tú");
-	interaction->AddDialogue("Aunque luego de unos segundos se cansa y te mira como si ni mereciese la pena esforzarse por parecer mas poderoso que tu. Creo que he visto rintintin en su mirada");
+	interaction->AddDialogue("The bird looks at you when you say hello, it's not sure what's going on but it makes a small guttural noise puffing out its chest. He seems to want to say that he is better than you");
+	interaction->AddDialogue("Although after a few seconds he gets tired and looks at you as if it's not even worth trying to seem more powerful than you. I think he has put on a mocking look.");
 	interaction->repetible = false;
 
 	Interaction* interaction2 = new Interaction(NULL);
-	interaction2->AddDialogue("Tras esa competición tan corta el ave ya ni se molesta en mirarte");
+	interaction2->AddDialogue("After that short competition, the bird doesn't even bother to look at you anymore.");
 
-	Interaction* interaction3 = new Interaction(item2);
-	interaction3->AddDialogue("Le acercas el trozo de carne al ave y está parece desconfiar al principio, aunque no tarda casi nada en intentar devorarlo, aunque apartas el trozo de carne a tiempo.");
-	interaction3->AddDialogue("El ave te vuelve a mirar entrecerrando los ojos. Claramente eso no le ha gustado, sin embargo emprende el vuelo y se mete en el agujero de la pared. Tras unos segundos vuelve con el medallon tirandolo a tu lado.");
-	interaction3->AddDialogue("Le das la carne y recoges el medallon del suelo. Se lo come antes de que puedas volver a levantar la cabeza");
+	Interaction* interaction3 = new Interaction(meat);
+	interaction3->AddDialogue("You approach the piece of meat to the bird and it seems suspicious at first, although it takes almost no time to try to devour it, although you move the piece of meat away in time.");
+	interaction3->AddDialogue("The bird looks at you again, narrowing its eyes. Clearly it didn't like that, however it takes flight and goes into the bathroom. After a few seconds it returns with a medallion, throwing it next to you.");
+	interaction3->AddDialogue("You give him the meat and pick up the medallion from the ground. He eats it before you can raise your head again");
 
-	ItemConsecuences* action3 = new ItemConsecuences((Entity*)item3,player,false);
-	ItemConsecuences* action3_1 = new ItemConsecuences((Item*)item3, false, "Coges el medallon");
-	ItemConsecuences* action3_2 = new ItemConsecuences((Entity*)item, false, "", "Es un agujero, parece que puedes meter la mano por él pero no se si quieras... Aunque no parece haber nada dentro");
+	ItemConsecuences* action3 = new ItemConsecuences((Entity*)medallion, player, false);
+	ItemConsecuences* action3_1 = new ItemConsecuences((Item*)medallion, false, "Coges el medallon");
+	ItemConsecuences* action3_2 = new ItemConsecuences((Entity*)hole, false, "", "Es un agujero, parece que puedes meter la mano por él pero no se si quieras... Aunque no parece haber nada dentro");
 	interaction3->Addconsecuence(action3);
 	interaction3->Addconsecuence(action3_1);
 	interaction3->Addconsecuence(action3_2);
 	interaction3->repetible = false;
 
+	owl->AddInteraction(interaction);
+	owl->AddInteraction(interaction3);
+	owl->AddInteraction(interaction2);
 
-	npc1->AddInteraction(interaction);
-	npc1->AddInteraction(interaction3);
-	npc1->AddInteraction(interaction2);
+	wholeExistance.push_back(owl);
+	
+	Action* useSheet = new Action(sheet, "You pull the sheet and discover a cage with an \033[1;33m owl\033[0m");
+	ItemConsecuences* freeOwl = new ItemConsecuences((Entity*)owl, lounge, false);
+	ItemConsecuences* changeLounge = new ItemConsecuences((Entity*)lounge,false, "", "A ordinary but messy living room, the light enters through a single window and the wooden floor creaks with each step. In the center of the room is a sturdy wooden \033[1;33mtable\033[0m accompanied by an old green \033[1;33msofa\033[0m. Next to it is an almost empty \033[1;33bookcase\033[0m and a small bedside table with a cage and a \033[1;33mowl\033[0m, it's looking you. There are two doors, a \033[1;33mbig\033[0m door at the east of the room and a \033[1;33msmall\033[0m one white door next to the bookcase. Smells of tobacco.");
+	useSheet->Addconsecuence(freeOwl);
+	useSheet->Addconsecuence(changeLounge);
 
-	wholeExistance.push_back(npc1);
+	sheet->AddAction(useSheet);
 
-	actualRoom = initialroom;
+	actualRoom = lounge;
 }
+
+
+/*TODO:
+	X Usar Items:
+		Usar un item implica cambiar stats de si mismo u otro.
+		Entonces un item tendrá un "Actions" que especifique cual de las acciones posibles hace y 
+		a quien cuando se usa sobre si mismo o sobre otro y que otro
+
+		Las acciones posibles son:
+			Desbloquear una EXIT
+			Cambiar un STAT de un personaje o el protagonista
+			Cambiar un item por otro X
+				--- No es lo mas eficaz pero todo se puede hacer cambiando por otro item ---> 
+					Cambiar un stat de un item por otro, como llenarlo con algo, abrirlo, etc.
+			Dejar un item dentro de otro (DROP ON)
+
+
+	Usar Items en OTROS Items/Exits/Player (Si es otro Item puede hacer algo o dejarlo dentro) X
+
+	X Actions with double args
+	X Tienes que poner las descripciones de cuando USAS un objeto
+	X y las limitaciones de cuando puedes usarlo y cuando no
+
+	X Desbloquear o bloquear Exits.
+	X Crear Player
+	X Consultar Stats
+
+	Poner > Cuando el Narrador habla X
+	Poner - A los items X
+	Poner un "  ->" a los items dentro de otros items cuando leo el inventario X
+
+
+	Obligatorio:
+		Al usar un item lo puedes perder (NOW) X
+		Crear NPCs con los que hablar y DAR items (8:30 a 10) X
+		Refactorizar codigo(11:30 a 12:30) X
+		
+		
+		Mas data (10 a 11)
+		Traducir al Ingles todo (11 a 11:30)
+
+
+
+		Testear Todito todito(12:30 a 13:30)
+		Probar el exe en otro ordenador(13:30 a 14:00)
+		Crear README y la sheet que me pedian(14:00 a 15:30)
+*/
 
 void World::ParseAction(vector<string> args) {
 
@@ -159,6 +313,9 @@ void World::ParseAction(vector<string> args) {
 		if (player->Getcontent().size() > 0) Inventory(player,0);
 		else cout << ">> You have fewer things than me, which is already saying a lot considering that I am just a text without a body" << endl;
 	}
+	else {
+		cout << ">> I don't understand you" << endl;
+	}
 }
 
 void World::Use(string nameObjectUsed, string nameObjectUsedOn) {
@@ -172,7 +329,10 @@ void World::Use(string nameObjectUsed, string nameObjectUsedOn) {
 			if (itemUsed->type == Type::EXITS && itemUsed->reachable && nameObjectUsedOn == "") Go(nameObjectUsed);
 			else if (itemUsed->type == Type::ITEM && itemUsed->reachable) {
 
-				if (nameObjectUsedOn == "") itemUsed->UseItem(itemUsed);
+				if (nameObjectUsedOn == "") {
+					itemUsed->UseItem(itemUsed);
+					itemUsed->usedWhenPick = false;
+				}
 				else {
 					Item* itemUsedOn = (Item*)actualRoom->CheckifContains(nameObjectUsedOn);
 					if (itemUsedOn == NULL) itemUsedOn = (Item*)player->CheckifContains(nameObjectUsedOn);
@@ -267,6 +427,13 @@ void World::Examine(string name) {
 
 		if (target != NULL) {
 			cout << ">> " << target->GetDescription() << endl;
+			if (target->havedropped > 0) {
+				cout << ">> And you drop all of this here:" << endl;
+				for (Entity* child : target->Getcontent()) {
+					if (child->dropped) cout << "  |-> " << child->name << endl;
+				}
+				if (target->havedropped > 5) cout << ">> Do you have diogenes?" << endl;
+			}
 		}
 		else
 		{
@@ -323,13 +490,21 @@ void World::Pick(string name) {
 	Item* item = (Item*)actualRoom->CheckifContains(name);
 
 	if (item != NULL) {
-
 		if (item->type == Type::ITEM && item->pickable) {
-			cout << ">> " <<  item->GetPickupActionDescription() << endl;
 			if (item->reachable) {
+
+				if (item->dropped) {
+					item->GetParent()->havedropped--;
+					item->dropped = false;
+				}
+				if (item->usedWhenPick) {
+					item->UseItem(item);
+					item->usedWhenPick = false;
+				}
 				item->GetParent()->RemoveChild(item);
 				player->AddChild(item);
 			}
+			cout << ">> " << item->GetPickupActionDescription() << endl;
 		}
 		else
 		{
@@ -352,22 +527,26 @@ void World::Drop(string dropped, string container ) {
 			if (itemDropped->dropable) {
 				if (container == "") {
 					cout << ">> Drop " << itemDropped->name << endl;
-					string pickdescription = "Cogiste " + itemDropped->name;
+					string pickdescription = "You pick up " + itemDropped->name;
 					itemDropped->SetPickupActionDescription(pickdescription);
 					itemDropped->GetParent()->RemoveChild(itemDropped);
 					actualRoom->AddChild(itemDropped);
+					itemDropped->dropped = true;
+					actualRoom->havedropped++;
 				}
 				else {
 					Item* itemContainer = (Item*)actualRoom->CheckifContains(container);
 					if (itemContainer == NULL) Item* itemContainer = (Item*)player->CheckifContains(container);
 					if (itemContainer != NULL) {
 						if (itemContainer->accesibleContent) {
-							cout << ">> Drop " << itemDropped->name << "on" << itemContainer->name << endl;
-							string pickdescription = "Cogiste " + itemDropped->name;
-							if(itemContainer->type != Type::ROOM)string pickdescription = "Cogiste " + itemDropped->name + " de " + itemContainer->name;
+							cout << ">> Drop " << itemDropped->name << " on " << itemContainer->name << endl;
+							string pickdescription = "You pick up " + itemDropped->name;
+							if(itemContainer->type != Type::ROOM)string pickdescription = "Pick up " + itemDropped->name + " of " + itemContainer->name;
 							itemDropped->SetPickupActionDescription(pickdescription);
 							itemDropped->GetParent()->RemoveChild(itemDropped);
 							itemContainer->AddChild(itemDropped);
+							itemDropped->dropped = true;
+							itemContainer->havedropped++;
 						}
 						else
 						{
@@ -410,6 +589,15 @@ void World::Inventory(Entity* inventory,int layer) {
 void World::PrintRoom(Room* room) {
 	cout << "<< " << room->GetName() << " >>" << endl;
 	cout << ">> " << room->GetDescription() << endl;
+
+	if (room->havedropped > 0) {
+		cout << ">> And you drop all of this here:" << endl;
+		for (Entity* child : room->Getcontent()) {
+			if (child->dropped) cout << "  |-> " << child->name << endl;
+		}
+		if (room->havedropped > 5) cout << ">> Do you have diogenes?" << endl;
+	}
+
 }
 
 void World::PrintStats(Creature* creature) {

@@ -34,16 +34,18 @@ void Npc::ActiveInteraction(Entity* usedItem)
 			used = true;
 		}
 		if (used) {
-			Item* itemUsed = (Item*)usedItem;
-			if (itemUsed->lostOnUse) {
-				itemUsed->GetParent()->RemoveChild(usedItem);
-				for (Action* action : itemUsed->GetActions()) {
-					for (ItemConsecuences* consecuence : action->consecuences) {
-						delete consecuence;
+			if (interaction->activewithItem != NULL) {
+				Item* itemUsed = (Item*)usedItem;
+				if (itemUsed->lostOnUse) {
+					itemUsed->GetParent()->RemoveChild(usedItem);
+					for (Action* action : itemUsed->GetActions()) {
+						for (ItemConsecuences* consecuence : action->consecuences) {
+							delete consecuence;
+						}
+						delete action;
 					}
-					delete action;
+					delete itemUsed;
 				}
-				delete itemUsed;
 			}
 			if (!interaction->repetible) {
 				interactions.remove(interaction);

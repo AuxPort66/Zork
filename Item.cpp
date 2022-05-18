@@ -10,6 +10,7 @@ Item::Item(const char* name, Entity* parent, const char* description) : Entity(n
 	this->pickable = true;
 	this->dropable = true;
 	this->lostOnUse = false;
+	this->usedWhenPick = false;
 }
 
 Item::~Item()

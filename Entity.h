@@ -34,13 +34,13 @@ public:
 	bool accesibleContent;
 	bool reachable;
 
+	bool dropped;
+	int havedropped;
+
 protected:
-
 	string description;
-
 	Entity* parent;
 	list<Entity*> content;
-
 };
 
 #endif //__Entity__
