@@ -15,6 +15,7 @@ class World
 public:
 	~World();
 	void Start();
+	bool isFinish();
 	void ChargeData();
 
 	void ParseAction(vector<string> args);

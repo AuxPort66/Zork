@@ -1,4 +1,5 @@
 #include "ItemConsecuences.h"
+#include "Player.h"
 
 ItemConsecuences::ItemConsecuences(Exits* exit, bool reversible)
 {
@@ -80,9 +81,14 @@ void ItemConsecuences::Action()
 void ItemConsecuences::EntityAction() {
 	if (parent != NULL) {
 		Entity* oldparent = Objective->GetParent();
-		oldparent->RemoveChild(Objective);
+		if(oldparent != NULL)oldparent->RemoveChild(Objective);
 		parent->AddChild(Objective);
 		if (reversible) parent = oldparent;
+		if (Objective->type == Type::PLAYER) {
+			Player* player = (Player*)Objective;
+			player->tp = true;
+		}
+
 	}
 	else if (name != "" || description != "") {
 		if (name != "") {

@@ -31,10 +31,10 @@ void Entity::RemoveChild(Entity* child) {
 
 Entity* Entity::CheckifContains(string name) {
 
-	if (accesibleContent) {
-		for (auto const& child : content) {
+	for (auto const& child : content) {
+		if (accesibleContent || child->alwaysReachable) {
 			if (child->name == name) return child;
-			else if (child->Getcontent().size() > 0 && child->type != Type::PLAYER) {
+			else if (accesibleContent && child->Getcontent().size() > 0 && child->type != Type::PLAYER) {
 				Entity* entityfound = child->CheckifContains(name);
 				if (entityfound != NULL) return entityfound;
 			}

@@ -53,6 +53,10 @@ void GameLoop() {
 		}
 
 		ParseAction(inputPlayer);
+
+		if (game.isFinish()) {
+			break;
+		}
 	}
 }
 
@@ -63,4 +67,6 @@ int main()
 	game.Start();
 
 	GameLoop();
+	cout << BOLD_ "THANKS FOR PLAYING" _RESTART << endl;
+	system("pause");
 }

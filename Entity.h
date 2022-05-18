@@ -36,6 +36,7 @@ public:
 
 	bool dropped;
 	int havedropped;
+	bool alwaysReachable;
 
 protected:
 	string description;

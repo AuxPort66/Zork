@@ -7,6 +7,8 @@ class Player :
 public:
     Player(const char* name, Entity* parent, const char* description);
     ~Player();
+
+    bool tp;
 };
 
 #endif //__Player__
