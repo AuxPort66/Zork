@@ -298,8 +298,10 @@ bool World::isFinish() {
 }
 
 void World::ParseAction(vector<string> args) {
-
-	if (args[0] == "Go") {
+	if (args.size() < 1) {
+		cout << ">> Say something! Don't look at me with those dead fish eyes. Also. How do you look at me?! I have no body!" << endl;
+	}
+	else if (args[0] == "Go") {
 		if (args.size() > 2) cout << ">> Ok, that was confusing. Decide, Go where?" << endl;
 		else if (args.size() == 2) Go(args[1]);
 		else cout << ">> Go? Where? Dumb dumb" << endl;
