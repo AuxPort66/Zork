@@ -1,39 +1,57 @@
-#pragma once
+ï»¿#pragma once
 #include "World.h"
 #include <iomanip>
 #include <iostream>
 using namespace std;
 
-void World::Start() {
+#define INPUT_ "\033[1;36m"
+#define BOLD_ "\033[1;33m"
+#define _RESTART "\033[0m"
+
+World::~World()
+{
+}
+
+void World::Start()
+{
+	Examine("Room");
+	cout << "----------------------------------------------" INPUT_ << endl;
+}
+
+void World::ChargeData() {
 
 
-	Room* initialroom = new Room("Hab1", "Una habitación normal y corriente, tiene una puerta. Cuando examinas un poco mas ves que tiene un agujero en una de las paredes", NULL);
-	Room* secondroom = new Room("Hab2", "Una habitación menos normal y corriente, tiene una puerta", NULL);
+	Room* initialroom = new Room("Hab1", NULL, "Una habitaciÃ³n normal y corriente, tiene una puerta. Cuando examinas un poco mas ves que tiene un \033[1;33magujero\033[0m en una de las paredes");
+	Room* secondroom = new Room("Hab2", NULL, "Una habitaciÃ³n menos normal y corriente, tiene una puerta");
 
 	wholeExistance.push_back(initialroom);
 	wholeExistance.push_back(secondroom);
 
-	player = new Player("Blake", "A person, I guess", actualRoom);
-	player->ChangeStat(PERCEPTION, 1);
-	player->ChangeStat(STRENGHT, 2);
-	player->ChangeStat(DEFENSE, 3);
+	player = new Player("Blake", actualRoom, "A person, I guess");
+	player->ChangeStat(Stats::PERCEPTION, 1);
+	player->ChangeStat(Stats::STRENGHT, 2);
+	player->ChangeStat(Stats::DEFENSE, 3);
 
 	wholeExistance.push_back(player);
 
 
-	Exits* exits = new Exits("Door", "Door between Hab1 and Hab2", initialroom, secondroom,"Usaste la puerta, hizo algo de ruido pero nada preocupante");
+	Exits* exits = new Exits("Door", initialroom, secondroom, "Door between Hab1 and Hab2");
+	exits->SetGoActionDescription("Usaste la puerta, hizo algo de ruido pero nada preocupante");
 	exits->lock = true;
 
 	wholeExistance.push_back(exits);
 
-	Item* item = new Item("Agujero", "Es un agujero, parece que puedes meter la mano por él pero no se si quieras... Ademas parece bastante profundo. Aunque al fondo creo que hay una especie de medallon", initialroom, "Como vas a coger un agujero?");
+	Item* item = new Item("Agujero", initialroom,"Es un agujero, parece que puedes meter la mano por Ã©l pero no se si quieras... Ademas parece bastante profundo. Aunque al fondo creo que hay una especie de medallon");
+	item->SetPickupActionDescription("Como vas a coger un agujero?");
 	item->pickable = false;
 
-	Item* item2 = new Item("Carne", "Es un trozo de carne que sacaste de la nevera, lo unico que quedaba dentro la verdad", initialroom, "Coges el trozo de carne, está a medio telediario de ya no ser comestible pero quizas te sirve pa algo");
+	Item* item2 = new Item("Carne", initialroom,"Es un trozo de carne que sacaste de la nevera, lo unico que quedaba dentro la verdad");
+	item2->SetPickupActionDescription("Coges el trozo de carne, estÃ¡ a medio telediario de ya no ser comestible pero quizas te sirve pa algo");
 	item2->dropable = false;
 	item2->lostOnUse = true;
 
-	Item* item3 = new Item("Medallon", "Medallon triangular, parece contener algo dentro", item, "No llegas al medallón, esta demasiado a dentro del agujero");
+	Item* item3 = new Item("Medallon", item,"Medallon triangular, parece contener algo dentro");
+	item3->SetPickupActionDescription("No llegas al medallÃ³n, esta demasiado a dentro del agujero");
 	item3->accesibleContent = false;
 	item3->reachable = false;
 	
@@ -44,7 +62,7 @@ void World::Start() {
 	actionswhenUse->Addconsecuence(action);
 	actionswhenUse->positionofusedOn = (Entity*)exits;
 
-	Action* actionswhenUseOnDoor = new Action(exits, "Colocaste el medallón en la puerta, y esta hizo un click");
+	Action* actionswhenUseOnDoor = new Action(exits, "Colocaste el medallÃ³n en la puerta, y esta hizo un click");
 	ItemConsecuences* action2 = new ItemConsecuences(exits, true);
 	ItemConsecuences* action2_1 = new ItemConsecuences((Entity*)item3,exits,true);
 	actionswhenUseOnDoor->Addconsecuence(action2);
@@ -53,7 +71,8 @@ void World::Start() {
 	item3->AddAction(actionswhenUse);
 	item3->AddAction(actionswhenUseOnDoor);
 	
-	Item* item4 = new Item("Foto", "Es una foto algo gastada que estaba dentro del medallón.", item3, "Sacas la foto del medallón y te la guardas en el bolsillo");
+	Item* item4 = new Item("Foto", item3, "Es una foto algo gastada que estaba dentro del medallÃ³n.");
+	item4->SetPickupActionDescription("Sacas la foto del medallÃ³n y te la guardas en el bolsillo");
 	
 	wholeExistance.push_back(item);
 	wholeExistance.push_back(item2);
@@ -63,21 +82,21 @@ void World::Start() {
 	Npc* npc1 = new Npc("Bird", "A gray owl, it seems quite calm and is not bothered by your presence. She ignores you meanwhile preens her feathers and if you stare at her  enough time you see her turning her head in a funny way. Owl's things.", initialroom);
 	
 	Interaction* interaction = new Interaction(NULL);
-	interaction->AddDialogue("El ave te mira cuando le dices hola, no está muy seguro de lo que pasa pero hace un pequeño ruido gutural hinchando el pecho. Parece querer decir que es mejor que tú");
+	interaction->AddDialogue("El ave te mira cuando le dices hola, no estÃ¡ muy seguro de lo que pasa pero hace un pequeÃ±o ruido gutural hinchando el pecho. Parece querer decir que es mejor que tÃº");
 	interaction->AddDialogue("Aunque luego de unos segundos se cansa y te mira como si ni mereciese la pena esforzarse por parecer mas poderoso que tu. Creo que he visto rintintin en su mirada");
 	interaction->repetible = false;
 
 	Interaction* interaction2 = new Interaction(NULL);
-	interaction2->AddDialogue("Tras esa competición tan corta el ave ya ni se molesta en mirarte");
+	interaction2->AddDialogue("Tras esa competiciÃ³n tan corta el ave ya ni se molesta en mirarte");
 
 	Interaction* interaction3 = new Interaction(item2);
-	interaction3->AddDialogue("Le acercas el trozo de carne al ave y está parece desconfiar al principio, aunque no tarda casi nada en intentar devorarlo, aunque apartas el trozo de carne a tiempo.");
+	interaction3->AddDialogue("Le acercas el trozo de carne al ave y estÃ¡ parece desconfiar al principio, aunque no tarda casi nada en intentar devorarlo, aunque apartas el trozo de carne a tiempo.");
 	interaction3->AddDialogue("El ave te vuelve a mirar entrecerrando los ojos. Claramente eso no le ha gustado, sin embargo emprende el vuelo y se mete en el agujero de la pared. Tras unos segundos vuelve con el medallon tirandolo a tu lado.");
 	interaction3->AddDialogue("Le das la carne y recoges el medallon del suelo. Se lo come antes de que puedas volver a levantar la cabeza");
 
 	ItemConsecuences* action3 = new ItemConsecuences((Entity*)item3,player,false);
-	ItemConsecuences* action3_1 = new ItemConsecuences((Item*)item3,"Coges el medallon", false);
-	ItemConsecuences* action3_2 = new ItemConsecuences((Entity*)item, "", "Es un agujero, parece que puedes meter la mano por él pero no se si quieras... Aunque no parece haber nada dentro", false);
+	ItemConsecuences* action3_1 = new ItemConsecuences((Item*)item3, false, "Coges el medallon");
+	ItemConsecuences* action3_2 = new ItemConsecuences((Entity*)item, false, "", "Es un agujero, parece que puedes meter la mano por Ã©l pero no se si quieras... Aunque no parece haber nada dentro");
 	interaction3->Addconsecuence(action3);
 	interaction3->Addconsecuence(action3_1);
 	interaction3->Addconsecuence(action3_2);
@@ -91,15 +110,7 @@ void World::Start() {
 	wholeExistance.push_back(npc1);
 
 	actualRoom = initialroom;
-
-	
-
-	Examine("Room");
-	cout << "----------------------------------------------" << endl;
 }
-
-
-
 
 void World::ParseAction(vector<string> args) {
 
@@ -158,8 +169,8 @@ void World::Use(string nameObjectUsed, string nameObjectUsedOn) {
 	if (itemUsed != NULL) {
 		if (nameObjectUsed == nameObjectUsedOn) cout << ">> No. Just...No. You can't do that" << endl;
 		else {
-			if (itemUsed->type == EXITS && itemUsed->reachable && nameObjectUsedOn == "") Go(nameObjectUsed);
-			else if (itemUsed->type == ITEM && itemUsed->reachable) {
+			if (itemUsed->type == Type::EXITS && itemUsed->reachable && nameObjectUsedOn == "") Go(nameObjectUsed);
+			else if (itemUsed->type == Type::ITEM && itemUsed->reachable) {
 
 				if (nameObjectUsedOn == "") itemUsed->UseItem(itemUsed);
 				else {
@@ -168,7 +179,7 @@ void World::Use(string nameObjectUsed, string nameObjectUsedOn) {
 
 					if (itemUsedOn != NULL) {
 						if (itemUsedOn->reachable) {
-							if (itemUsedOn->type == NPC) Give(nameObjectUsed, nameObjectUsedOn);
+							if (itemUsedOn->type == Type::NPC) Give(nameObjectUsed, nameObjectUsedOn);
 							else itemUsed->UseItem(itemUsedOn);
 						}
 						else cout << ">> Can you explain to me how you will use that, exactly?" << endl;
@@ -196,7 +207,7 @@ void World::Give(string nameObjectgiven, string nameNpc) {
 	Item* itemUsed = (Item*)player->CheckifContains(nameObjectgiven);
 
 	if (itemUsed != NULL) {
-			if (itemUsed->type == ITEM && itemUsed->reachable) {
+			if (itemUsed->type == Type::ITEM && itemUsed->reachable) {
 				
 				Npc* npcUsedOn = (Npc*)actualRoom->CheckifContains(nameNpc);
 
@@ -225,7 +236,7 @@ void World::Talk(string nameNpc) {
 	Npc* npc = (Npc*)actualRoom->CheckifContains(nameNpc);
 
 	if (npc != NULL) {
-		if (npc->type == NPC) {
+		if (npc->type == Type::NPC) {
 			npc->ActiveInteraction(NULL);
 		}
 		else
@@ -278,7 +289,7 @@ void World::Go(string name) {
 
 	if (exit != NULL) {
 
-		if (exit->type == EXITS) {
+		if (exit->type == Type::EXITS) {
 			if (exit->reachable) {
 				if (!exit->lock) {
 					actualRoom = exit->GetDestination(actualRoom);
@@ -313,7 +324,7 @@ void World::Pick(string name) {
 
 	if (item != NULL) {
 
-		if (item->type == ITEM && item->pickable) {
+		if (item->type == Type::ITEM && item->pickable) {
 			cout << ">> " <<  item->GetPickupActionDescription() << endl;
 			if (item->reachable) {
 				item->GetParent()->RemoveChild(item);
@@ -353,7 +364,7 @@ void World::Drop(string dropped, string container ) {
 						if (itemContainer->accesibleContent) {
 							cout << ">> Drop " << itemDropped->name << "on" << itemContainer->name << endl;
 							string pickdescription = "Cogiste " + itemDropped->name;
-							if(itemContainer->type != ROOM)string pickdescription = "Cogiste " + itemDropped->name + " de " + itemContainer->name;
+							if(itemContainer->type != Type::ROOM)string pickdescription = "Cogiste " + itemDropped->name + " de " + itemContainer->name;
 							itemDropped->SetPickupActionDescription(pickdescription);
 							itemDropped->GetParent()->RemoveChild(itemDropped);
 							itemContainer->AddChild(itemDropped);
@@ -402,8 +413,8 @@ void World::PrintRoom(Room* room) {
 }
 
 void World::PrintStats(Creature* creature) {
-	cout << "HP: " << creature->hp << endl;
-	cout << "STRONG: " << creature->strenght << endl;
-	cout << "PERCEPTION: " << creature->perception << endl;
-	cout << "DEFENSE: " << creature->defense << endl;
+	cout << "HP: " << creature->GetStat(Stats::HP) << endl;
+	cout << "STRENGHT: " << creature->GetStat(Stats::STRENGHT) << endl;
+	cout << "PERCEPTION: " << creature->GetStat(Stats::PERCEPTION) << endl;
+	cout << "DEFENSE: " << creature->GetStat(Stats::DEFENSE) << endl;
 }

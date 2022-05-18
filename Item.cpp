@@ -2,16 +2,19 @@
 #include "ItemConsecuences.h"
 #include <iostream>
 
-Item::Item(const char* name, const char* description, Entity* parent, const char* pickupAction) : Entity(name, description, parent)
+Item::Item(const char* name, Entity* parent, const char* description) : Entity(name, description, parent)
 {
-	type = ITEM;
+	type = Type::ITEM;
 
-	this->pickupDescription = pickupAction;
+	this->pickupDescription = "";
 	this->pickable = true;
 	this->dropable = true;
 	this->lostOnUse = false;
 }
 
+Item::~Item()
+{
+}
 
 string Item::GetPickupActionDescription()
 {
@@ -35,12 +38,12 @@ void Item::UseItem(Entity* usedOn)
 		if (action->usedOn == usedOn) {
 			if ((action->positionofusedOn == NULL || (action->positionofusedOn == usedOn->GetParent()))) {
 				for (ItemConsecuences* consecuence : action->consecuences) {
-					if (!consecuence->marked) {
+					if (!consecuence->spent) {
 						consecuence->Action();
 						used = true;
 					}
 					if (!consecuence->reversible) {
-						consecuence->marked = true;
+						consecuence->spent = true;
 					}
 				}
 				if (used) {

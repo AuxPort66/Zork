@@ -1,6 +1,10 @@
 #include "Room.h"
 
-Room::Room(const char* name, const char* description, Entity* parent) : Entity(name, description, parent)
+Room::Room(const char* name, Entity* parent, const char* description) : Entity(name, description, parent)
 {
-	type = ROOM;
+	type = Type::ROOM;
+}
+
+Room::~Room()
+{
 }

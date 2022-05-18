@@ -3,45 +3,45 @@
 ItemConsecuences::ItemConsecuences(Exits* exit, bool reversible)
 {
 	Objective = exit;
-	change = EXITS;
+	typeChange = Type::EXITS;
 	this->reversible = reversible;
-	marked = false;
+	spent = false;
 }
 
-ItemConsecuences::ItemConsecuences(Item* item,string pickableDescription ,bool reversible)
+ItemConsecuences::ItemConsecuences(Item* item,bool reversible, const char* pickableDescription)
 {
 	Objective = item;
-	change = ITEM;
+	typeChange = Type::ITEM;
 	this->pickableDescription = pickableDescription;
 	this->reversible = reversible;
-	marked = false;
+	spent = false;
 }
 
 ItemConsecuences::ItemConsecuences(Entity* entity, bool reversible)
 {
 	Objective = entity;
-	change = ENTITY;
+	typeChange = Type::ENTITY;
 	this->reversible = reversible;
-	marked = false;
+	spent = false;
 }
 
-ItemConsecuences::ItemConsecuences(Entity* entity, string name, string description, bool reversible)
+ItemConsecuences::ItemConsecuences(Entity* entity, bool reversible, string name, string description)
 {
 	Objective = entity;
 	this->name = name;
 	this->description = description;
-	change = ENTITY;
+	typeChange = Type::ENTITY;
 	this->reversible = reversible;
-	marked = false;
+	spent = false;
 }
 
 ItemConsecuences::ItemConsecuences(Entity* entity, Entity* parent, bool reversible)
 {
 	Objective = entity;
 	this->parent = parent;
-	change = ENTITY;
+	typeChange = Type::ENTITY;
 	this->reversible = reversible;
-	marked = false;
+	spent = false;
 }
 
 ItemConsecuences::ItemConsecuences(Creature* creature, Stats stattype, int value, bool reversible)
@@ -49,9 +49,9 @@ ItemConsecuences::ItemConsecuences(Creature* creature, Stats stattype, int value
 	Objective = creature;
 	this->stattype = stattype;
 	this->valuestat = value;
-	change = CREATURE;
+	typeChange = Type::CREATURE;
 	this->reversible = reversible;
-	marked = false;
+	spent = false;
 }
 
 ItemConsecuences::~ItemConsecuences()
@@ -60,18 +60,18 @@ ItemConsecuences::~ItemConsecuences()
 
 void ItemConsecuences::Action()
 {
-	switch (change)
+	switch (typeChange)
 	{
-	case ENTITY:
+	case Type::ENTITY:
 		EntityAction();
 		break;
-	case ITEM: 
+	case Type::ITEM:
 		ItemAction();
 		break;
-	case EXITS:
+	case Type::EXITS:
 		ExitAction();
 		break;
-	case CREATURE:
+	case Type::CREATURE:
 		CreatureAction();
 		break;
 	}

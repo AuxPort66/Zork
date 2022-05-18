@@ -25,16 +25,14 @@ class Item :
     public Entity
 {
 public:
-    Item(const char* name, const char* description, Entity* parent, const char* pickupAction);
+    Item(const char* name, Entity* parent, const char* description);
+    ~Item();
     string GetPickupActionDescription();
     void SetPickupActionDescription(string pickupDescription);
 
     void AddAction(Action* action);
-
     void UseItem(Entity* usedOn);
-
     list<Action*> GetActions();
-
 
     bool pickable;
     bool dropable;

@@ -1,27 +1,31 @@
 #include "Creature.h"
 Creature::Creature(const char* name, const char* description, Entity* parent) : Entity(name, description, parent)
 {
-	type = CREATURE;
+	type = Type::CREATURE;
 	this->hp = 1;
 	this->strenght = 1;
 	this->perception = 1;
 	this->defense = 1;
 }
 
+Creature::~Creature()
+{
+}
+
 void Creature::ChangeStat(Stats type, int value)
 {
 	switch (type)
 	{
-	case HP:
+	case Stats::HP:
 		hp += value;
 		break;
-	case PERCEPTION:
+	case Stats::PERCEPTION:
 		perception += value;
 		break;
-	case STRENGHT:
+	case Stats::STRENGHT:
 		strenght += value;
 		break;
-	case DEFENSE:
+	case Stats::DEFENSE:
 		defense += value;
 		break;
 	}
@@ -31,15 +35,15 @@ int Creature::GetStat(Stats type) {
 
 	switch (type)
 	{
-	case HP:
+	case Stats::HP:
 		return hp;
-	case PERCEPTION:
+	case Stats::PERCEPTION:
 		return perception;
-	case STRENGHT:
+	case Stats::STRENGHT:
 		return strenght;
-	case DEFENSE:
+	case Stats::DEFENSE:
 		return defense;
 	}
-	
+	return NULL;
 }
 

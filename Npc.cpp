@@ -4,7 +4,11 @@
 
 Npc::Npc(const char* name, const char* description, Entity* parent) : Creature(name, description, parent)
 {
-	type = NPC;
+	type = Type::NPC;
+}
+
+Npc::~Npc()
+{
 }
 
 void Npc::AddInteraction(Interaction* interaction)
@@ -22,9 +26,9 @@ void Npc::ActiveInteraction(Entity* usedItem)
 			}
 
 			for (ItemConsecuences* consecuence : interaction->consecuences) {
-				if (!consecuence->marked)consecuence->Action();
+				if (!consecuence->spent)consecuence->Action();
 				if (!consecuence->reversible) {
-					consecuence->marked = true;
+					consecuence->spent = true;
 				}
 			}
 			used = true;

@@ -13,6 +13,10 @@ Entity::Entity(const char* name, const char* description, Entity* parent) {
 	}
 }
 
+Entity::~Entity()
+{
+}
+
 void Entity::AddChild(Entity* child) {
 	content.push_back(child);
 	child->parent = this;
@@ -27,7 +31,7 @@ Entity* Entity::CheckifContains(string name) {
 	if (accesibleContent) {
 		for (auto const& child : content) {
 			if (child->name == name) return child;
-			else if (child->Getcontent().size() > 0 && child->type != PLAYER) {
+			else if (child->Getcontent().size() > 0 && child->type != Type::PLAYER) {
 				Entity* entityfound = child->CheckifContains(name);
 				if (entityfound != NULL) return entityfound;
 			}

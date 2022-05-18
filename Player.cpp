@@ -1,6 +1,10 @@
 #include "Player.h"
 
-Player::Player(const char* name, const char* description, Entity* parent) : Creature(name,description,parent)
+Player::Player(const char* name, Entity* parent, const char* description) : Creature(name,description,parent)
 {
-	type = PLAYER;
+	type = Type::PLAYER;
+}
+
+Player::~Player()
+{
 }

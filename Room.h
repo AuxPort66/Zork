@@ -4,7 +4,8 @@
 class Room : public Entity
 {
 public:
-    Room(const char* name, const char* description, Entity* parent);
+    Room(const char* name, Entity* parent, const char* description);
+    ~Room();
 };
 
 #endif //__Room__

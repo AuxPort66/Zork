@@ -13,7 +13,10 @@
 class World
 {
 public:
+	~World();
 	void Start();
+	void ChargeData();
+
 	void ParseAction(vector<string> args);
 	void Use(string nameObjectUsed, string nameObjectUsedOn);
 	void Give(string nameObjectgiven, string nameNpc);
@@ -23,13 +26,14 @@ public:
 	void Pick(string name);
 	void Drop(string dropped, string container);
 	void Inventory(Entity* inventory, int layer);
+
 	void PrintRoom(Room* room);
 	void PrintStats(Creature* creature);
+
 private:
 	vector<Entity*> wholeExistance;
 	Room* actualRoom;
 	Player* player;
-
 };
 
 #endif //__World__

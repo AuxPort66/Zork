@@ -1,15 +1,19 @@
 #include "Exits.h"
 
-Exits::Exits(const char* name, const char* description, Room* origin, Room* destination, const char* goAction) : Entity(name, description, (Entity*)origin) {
+Exits::Exits(const char* name, Room* origin, Room* destination, const char* description) : Entity(name, description, (Entity*)origin) {
 	
-	type = EXITS;
+	type = Type::EXITS;
 	
 	this->lock = false;
 	this->destination = destination;
 	destination->AddChild(this);
 	this->parent = origin;
+	string goactionDescription = "Go through " + this->name;
+	this->goActionDescription = goactionDescription;
+}
 
-	this->goAction = goAction;
+Exits::~Exits()
+{
 }
 
 Room* Exits::GetDestination(Room* actualroom) {
@@ -20,5 +24,10 @@ Room* Exits::GetDestination(Room* actualroom) {
 }
 
 string Exits::GetGoActionDescription() {
-	return goAction;
+	return goActionDescription;
+}
+
+void Exits::SetGoActionDescription(string goActionDescription)
+{
+	this->goActionDescription = goActionDescription;
 }

@@ -5,8 +5,8 @@ class Player :
     public Creature
 {
 public:
-    Player(const char* name, const char* description, Entity* parent);
-
+    Player(const char* name, Entity* parent, const char* description);
+    ~Player();
 };
 
 #endif //__Player__

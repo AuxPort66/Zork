@@ -6,7 +6,7 @@ class ItemConsecuences;
 
 struct Interaction {
     bool repetible;
-    bool marked;
+    bool spent;
     Entity* activewithItem;
     list<ItemConsecuences*> consecuences;
     list <string> dialogue;
@@ -14,7 +14,7 @@ struct Interaction {
     Interaction(Entity* activewithItem) {
         this->activewithItem = activewithItem;
         repetible = true;
-        marked = false;
+        spent = false;
     }
 
     void AddDialogue(const char* dialogue) {
@@ -31,6 +31,7 @@ class Npc :
 {
 public:
     Npc(const char* name, const char* description, Entity* parent);
+    ~Npc();
     void AddInteraction(Interaction* interaction);
     void ActiveInteraction(Entity* usedItem);
 

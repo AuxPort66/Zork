@@ -1,5 +1,3 @@
-// Zork.cpp : Este archivo contiene la función "main". La ejecución del programa comienza y termina ahí.
-//
 
 #include <iostream>
 #include <string>
@@ -8,36 +6,61 @@
 #include <conio.h>
 #include <stdio.h>
 #include <sstream>
-
 using namespace std;
 
-int main()
-{
-    World game;
-	game.Start();
-	vector<string> args;
+#define INPUT_ "\033[1;36m"
+#define BOLD_ "\033[1;4;33m"
+#define _RESTART "\033[0m"
+
+
+vector<string> ignoredWords = { "Into","On","To","Through","In","The","With" };
+World game;
+
+bool isIgnoredWord(string word) {
+
+	for (string ignoredWord : ignoredWords) {
+		if (word == ignoredWord) return true;
+	}
+	return false;
+}
+
+void ParseAction(vector<string> inputPlayer) {
+	cout << _RESTART "----------------------------------------------" << endl;
+	game.ParseAction(inputPlayer);
+	cout << "----------------------------------------------" INPUT_ << endl;
+}
+
+void GameLoop() {
+	vector<string> inputPlayer;
 
 	while (true)
 	{
-		string read;
+		inputPlayer.clear();
 
-		getline(cin, read);
-		stringstream action(read);
-		string tmp;
-		args.clear();
-		while (getline(action, tmp,' '))
+		string readInput;
+		getline(cin, readInput);
+		stringstream fullInput(readInput);
+		string oneWord;
+
+		while (getline(fullInput, oneWord, ' '))
 		{
-			tmp[0] = toupper(tmp[0]);
-			for (int i = 1; i < tmp.size(); i++)
+			oneWord[0] = toupper(oneWord[0]);
+			for (int i = 1; i < (signed)oneWord.size(); i++)
 			{
-				tmp[i] = tolower(tmp[i]);
+				oneWord[i] = tolower(oneWord[i]);
 			}
-			if (tmp != "Into" && tmp != "On" && tmp != "To" && tmp != "Through" && tmp != "In" && tmp != "The" && tmp != "With") args.push_back(tmp);
+			if (!isIgnoredWord(oneWord)) inputPlayer.push_back(oneWord);
 		}
 
-		cout << "----------------------------------------------" << endl;
-		game.ParseAction(args);
-		cout << "----------------------------------------------" << endl;
+		ParseAction(inputPlayer);
 	}
+}
 
+int main()
+{
+	cout << BOLD_ "WELCOME! The game is about to start" _RESTART << endl;
+	game.ChargeData();
+	game.Start();
+
+	GameLoop();
 }

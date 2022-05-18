@@ -6,14 +6,16 @@ class Exits :
     public Entity
 {
 public:
-    Exits(const char* name, const char* description, Room* origin, Room* destination, const char* goAction);
+    Exits(const char* name, Room* origin, Room* destination, const char* description);
+    ~Exits();
     Room* GetDestination(Room* actualroom);
     string GetGoActionDescription();
+    void SetGoActionDescription(string goActionDescription);
 
     bool lock;
 
 private:
     Room* destination;
-    string goAction;
+    string goActionDescription;
 };
 #endif
