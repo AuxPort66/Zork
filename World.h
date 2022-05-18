@@ -8,7 +8,7 @@
 #include "Exits.h"
 #include "Item.h"
 #include "Player.h"
-#include "ItemActions.h"
+#include "ItemConsecuences.h"
 
 class World
 {
@@ -19,7 +19,7 @@ public:
 	void Examine(string name);
 	void Go(string destino);
 	void Pick(string name);
-	void Drop(string name);
+	void Drop(string dropped, string container);
 	void Inventory(Entity* inventory);
 	void PrintRoom(Room* room);
 	void PrintStats(Creature* creature);

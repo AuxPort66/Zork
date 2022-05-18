@@ -2,27 +2,40 @@
 #define __Item__
 #include "Entity.h"
 
-class ItemActions;
+class ItemConsecuences;
+
+struct Action {
+    Entity* usedOn;
+    list<ItemConsecuences*> consecuences;
+    string useDescription;
+
+    Action(Entity* usedOn,const char* useDescription) {
+        this->usedOn = usedOn;
+        this->useDescription = useDescription;
+    }
+
+    void Addconsecuence(ItemConsecuences* consecuence) {
+        consecuences.push_back(consecuence);
+    }
+};
 
 class Item :
     public Entity
 {
 public:
-    Item(const char* name, const char* description, Entity* parent, const char* pickupAction, const char* useAction);
-    string GetUseActionDescription();
+    Item(const char* name, const char* description, Entity* parent, const char* pickupAction);
     string GetPickupActionDescription();
 
-    void AddAction(ItemActions* action);
+    void AddAction(Action* action);
 
-    void UseItem();
+    void UseItem(Entity* usedOn);
 
     bool pickable;
     bool dropable;
 
 private:
     string pickupDescription;
-    string useDescription;
-    list<ItemActions*> actions;
+    list<Action*> actions;
 };
 
 #endif //__Item__

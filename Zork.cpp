@@ -34,7 +34,7 @@ int main()
 				{
 					tmp[i] = tolower(tmp[i]);
 				}
-				args.push_back(tmp);
+				if (tmp != "Into" && tmp != "On" && tmp != "To" && tmp != "Through" && tmp != "In" && tmp != "The") args.push_back(tmp);
 			}
 			game.ParseAction(args);
 		}

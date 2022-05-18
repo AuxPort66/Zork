@@ -12,16 +12,22 @@ void World::Start() {
 	exits->lock = true;
 
 
-	Item* item = new Item("Piedra", "Es una piedra, parece perfecta para rebotar en el lago si sabes lanzarla", initialroom, "Tomas la piedra y la pones en el bolsillo", "Usas la piedra, pero no sabes bien como");
-	Item* item2 = new Item("Piedra2", "Es una piedra dentro de una piedra, parece perfecta para rebotar en el lago si sabes lanzarla", item, "Tomas la piedra dentro de una piedra y la pones en el bolsillo", "Usas la piedra, pero no sabes bien como");
+	Item* item = new Item("Piedra", "Es una piedra, parece perfecta para rebotar en el lago si sabes lanzarla", initialroom, "Tomas la piedra y la pones en el bolsillo");
+	Item* item2 = new Item("Piedra2", "Es una piedra dentro de una piedra, parece perfecta para rebotar en el lago si sabes lanzarla", item, "Tomas la piedra dentro de una piedra y la pones en el bolsillo");
 	item2->accesibleContent = false;
 
-	ItemActions* action = new ItemActions((Entity*)item2, true);
-	ItemActions* action2 = new ItemActions(exits, true);
-	item2->AddAction(action);
-	item2->AddAction(action2);
+	ItemConsecuences* action = new ItemConsecuences((Entity*)item2, true);
+	Action* actionswhenUse = new Action(NULL, "Usaste la piedra2, no se como, pero eso hizo que se oyerá un click en ella");
+	actionswhenUse->Addconsecuence(action);
+
+	Action* actionswhenUseOnDoor = new Action(exits, "Usaste la piedra2 en la puerta, no se como la verdad, pero escuchaste un click");
+	ItemConsecuences* action2 = new ItemConsecuences(exits, true);
+	actionswhenUseOnDoor->Addconsecuence(action2);
+
+	item2->AddAction(actionswhenUse);
+	item2->AddAction(actionswhenUseOnDoor);
 	
-	Item* item3 = new Item("Piedra3", "Es una piedra dentro de una piedra dentro de una piedra, parece perfecta para rebotar en el lago si sabes lanzarla", item2, "Tomas la piedra dentro de una piedra dentro de una piedra y la pones en el bolsillo", "Usas la piedra, pero no sabes bien como");
+	Item* item3 = new Item("Piedra3", "Es una piedra dentro de una piedra dentro de una piedra, parece perfecta para rebotar en el lago si sabes lanzarla", item2, "Tomas la piedra dentro de una piedra dentro de una piedra y la pones en el bolsillo");
 		
 	actualRoom = initialroom;
 
@@ -35,28 +41,69 @@ void World::Start() {
 }
 
 
+/*TODO:
+	X Usar Items:
+		Usar un item implica cambiar stats de si mismo u otro.
+		Entonces un item tendrá un "Actions" que especifique cual de las acciones posibles hace y 
+		a quien cuando se usa sobre si mismo o sobre otro y que otro
 
+		Las acciones posibles son:
+			Desbloquear una EXIT
+			Cambiar un STAT de un personaje o el protagonista
+			Cambiar un item por otro X
+				--- No es lo mas eficaz pero todo se puede hacer cambiando por otro item ---> 
+					Cambiar un stat de un item por otro, como llenarlo con algo, abrirlo, etc.
+			Dejar un item dentro de otro (DROP ON)
+
+
+	Usar Items en OTROS Items/Exits/Player (Si es otro Item puede hacer algo o dejarlo dentro) X
+
+	X Actions with double args
+	X Tienes que poner las descripciones de cuando USAS un objeto
+	X y las limitaciones de cuando puedes usarlo y cuando no
+
+	X Desbloquear o bloquear Exits.
+	X Crear Player
+	X Consultar Stats
+	Crear NPCs con los que hablar
+	Mecanica de percepción para saber que hay detras de puertas al usar Examine or Look en una salida?
+	DataBase en un TXT
+	Mas dialogos
+	Traducir al Ingles todo X
+	Programación dinamica con hash en el nombre?
+*/
 
 void World::ParseAction(vector<string> args) {
 
 	if (args[0] == "Go") {
-		if (args.size() > 1) Go(args[1]);
-		else cout << "Go where? Dumb dumb" << endl;
+		if (args.size() > 2) cout << "Ok, that was confusing. Decide, Go where?" << endl;
+		else if (args.size() == 2) Go(args[1]);
+		else cout << "Go? Where? Dumb dumb" << endl;
 	}
 	else if (args[0] == "Examine" || args[0] == "Look") {
 		if (args.size() == 1) Examine("Room");
+		else if (args.size() > 2) cout << "You have two eyes but I don't think you can examine two things at the same time." << endl;
 		else Examine(args[1]);
 	}
 	else if (args[0] == "Pick" || args[0] == "Take") {
-		if (args.size() > 1) Pick(args[1]);
-		else cout << "Pick what? Me?" << endl;
+		if (args.size() > 2) cout << "Ok, that was confusing. Decide, Pick what?" << endl;
+		else if (args.size() == 2) Pick(args[1]);
+		else cout << "Pick? What? Me?" << endl;
 	}
 	else if (args[0] == "Drop") {
-		if (args.size() > 1) Drop(args[1]);
-		else cout << "Drop what? You?" << endl;
+		if(args.size() > 3) cout << "Ok, that was confusing. Decide, Drop what?" << endl;
+		else if (args.size() == 3) Drop(args[1], args[2]);
+		else if (args.size() == 2) Drop(args[1],"");
+		else cout << "Drop? What? You?" << endl;
+	}
+	else if (args[0] == "Put") {
+		if (args.size() > 3) cout << "Ok, that was confusing. Decide, Put what on where?" << endl;
+		else if (args.size() == 3) Drop(args[1], args[2]);
+		else cout << "Put? What? on Where?" << endl;
 	}
 	else if (args[0] == "Use") {
-		if (args.size() == 2) Use(args[1],"");
+		if (args.size() > 2) Use(args[1], args[2]);
+		else if (args.size() == 2) Use(args[1],"");
 		else cout << "Use what? that? or that? Or that other thing? Which?!" << endl;
 	}
 	else if (args[0] == "Inventory") {
@@ -66,31 +113,39 @@ void World::ParseAction(vector<string> args) {
 }
 
 void World::Use(string nameObjectUsed, string nameObjectUsedOn) {
-	if (nameObjectUsedOn == "") {
-		Item* itemUsed = (Item*)actualRoom->CheckifContains(nameObjectUsed);
-		if (itemUsed != NULL) {
-			if (itemUsed->type == EXITS) Go(nameObjectUsed);
+
+	Item* itemUsed = (Item*)actualRoom->CheckifContains(nameObjectUsed);
+	if(itemUsed == NULL) itemUsed = (Item*)player->CheckifContains(nameObjectUsed);
+	
+	if (itemUsed != NULL) {
+		if (nameObjectUsed == nameObjectUsedOn) cout << "No. Just...No. You can't do that" << endl;
+		else {
+			if (itemUsed->type == EXITS && nameObjectUsedOn == "") Go(nameObjectUsed);
 			else if (itemUsed->type == ITEM) {
-				itemUsed->UseItem();
+
+				if (nameObjectUsedOn == "") itemUsed->UseItem(NULL);
+				else {
+					Item* itemUsedOn = (Item*)actualRoom->CheckifContains(nameObjectUsedOn);
+					if (itemUsedOn == NULL) itemUsedOn = (Item*)player->CheckifContains(nameObjectUsedOn);
+
+					if (itemUsedOn != NULL) {
+						itemUsed->UseItem(itemUsedOn);
+					}
+					else
+					{
+						cout << "You want to use that on what?" << endl;
+					}
+
+				}
+
 			}
 			else {
 				cout << "Can you explain to me how you will use that, exactly?" << endl;
 			}
 		}
-		itemUsed = (Item*)player->CheckifContains(nameObjectUsed);
-		if (itemUsed != NULL) {
-			if (itemUsed->type == ITEM) {
-				itemUsed->UseItem();
-			}
-			else
-			{
-				cout << "Can you explain to me how you will use that, exactly?" << endl;
-			}
-		}
-		else
-		{
-			cout << "Use what?" << endl;
-		}
+	}
+	else {
+		cout << "Use what?" << endl;
 	}
 }
 
@@ -181,23 +236,48 @@ void World::Pick(string name) {
 	}
 }
 
-void World::Drop(string name) {
+void World::Drop(string dropped, string container ) {
 
-	Item* item = (Item*)player->CheckifContains(name);
-	if (item != NULL) {
-		if (item->dropable) {
-			cout << "Drop " << item->name << endl;
-			item->GetParent()->RemoveChild(item);
-			actualRoom->AddChild(item);
+	if (dropped == container) cout << "No. Just...No. You can't do that" << endl;
+	else {
+		Item* itemDropped = (Item*)player->CheckifContains(dropped);
+		if (itemDropped != NULL) {
+
+			if (itemDropped->dropable) {
+				if (container == "") {
+					cout << "Drop " << itemDropped->name << endl;
+					itemDropped->GetParent()->RemoveChild(itemDropped);
+					actualRoom->AddChild(itemDropped);
+				}
+				else {
+					Item* itemContainer = (Item*)actualRoom->CheckifContains(container);
+					if (itemContainer == NULL) Item* itemContainer = (Item*)player->CheckifContains(container);
+					if (itemContainer != NULL) {
+						if (itemContainer->accesibleContent) {
+							cout << "Drop " << itemDropped->name << "on" << itemContainer->name << endl;
+							itemDropped->GetParent()->RemoveChild(itemDropped);
+							itemContainer->AddChild(itemDropped);
+						}
+						else
+						{
+							cout << "You can put things there" << endl;
+						}
+					}
+					else
+					{
+						cout << "Where you want to drop that? Excuse me?" << endl;
+					}
+				}
+			}
+			else
+			{
+				cout << "Nah, you won't throw that away" << endl;
+			}
 		}
 		else
 		{
-			cout << "Nah, you won't throw that away" << endl;
+			cout << "How are you going to throw away something you don't have? Are you ok?" << endl;
 		}
-	}
-	else
-	{
-		cout << "How are you going to throw away something you don't have? Are you ok?" << endl;
 	}
 
 }

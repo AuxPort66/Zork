@@ -1,19 +1,14 @@
 #include "Item.h"
-#include "ItemActions.h"
+#include "ItemConsecuences.h"
+#include <iostream>
 
-Item::Item(const char* name, const char* description, Entity* parent, const char* pickupAction, const char* useAction) : Entity(name, description, parent)
+Item::Item(const char* name, const char* description, Entity* parent, const char* pickupAction) : Entity(name, description, parent)
 {
 	type = ITEM;
 
 	this->pickupDescription = pickupAction;
-	this->useDescription = useAction;
 	this->pickable = true;
 	this->dropable = true;
-}
-
-string Item::GetUseActionDescription()
-{
-	return useDescription;
 }
 
 
@@ -22,18 +17,28 @@ string Item::GetPickupActionDescription()
 	return pickupDescription;
 }
 
-void Item::AddAction(ItemActions* action)
+void Item::AddAction(Action* action)
 {
 	actions.push_back(action);
 }
 
-void Item::UseItem()
+
+void Item::UseItem(Entity* usedOn)
 {
-	for (ItemActions* action : actions) {
-		action->Action();
-		if (!action->reversible) {
-			actions.remove(action);
-			delete action;
+	for (Action* action : actions) {
+		if (action->usedOn == usedOn) {
+			for (ItemConsecuences* consecuence : action->consecuences) {
+				consecuence->Action();
+				if (!consecuence->reversible) {
+					action->consecuences.remove(consecuence);
+					delete consecuence;
+					if (action->consecuences.size() == 0) {
+						actions.remove(action);
+						delete action;
+					}
+				}
+			}
+			cout << action->useDescription << endl;
 		}
 	}
 }

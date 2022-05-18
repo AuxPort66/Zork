@@ -1,27 +1,27 @@
-#include "ItemActions.h"
+#include "ItemConsecuences.h"
 
-ItemActions::ItemActions(Exits* exit, bool reversible)
+ItemConsecuences::ItemConsecuences(Exits* exit, bool reversible)
 {
 	Objective = exit;
 	change = EXITS;
 	this->reversible = reversible;
 }
 
-ItemActions::ItemActions(Item* item, bool reversible)
+ItemConsecuences::ItemConsecuences(Item* item, bool reversible)
 {
 	Objective = item;
 	change = ITEM;
 	this->reversible = reversible;
 }
 
-ItemActions::ItemActions(Entity* entity, bool reversible)
+ItemConsecuences::ItemConsecuences(Entity* entity, bool reversible)
 {
 	Objective = entity;
 	change = ENTITY;
 	this->reversible = reversible;
 }
 
-ItemActions::ItemActions(Entity* entity, string name, string description, bool reversible)
+ItemConsecuences::ItemConsecuences(Entity* entity, string name, string description, bool reversible)
 {
 	Objective = entity;
 	this->name = name;
@@ -30,7 +30,7 @@ ItemActions::ItemActions(Entity* entity, string name, string description, bool r
 	this->reversible = reversible;
 }
 
-ItemActions::ItemActions(Entity* entity, Entity* parent, bool reversible)
+ItemConsecuences::ItemConsecuences(Entity* entity, Entity* parent, bool reversible)
 {
 	Objective = entity;
 	this->parent = parent;
@@ -38,7 +38,7 @@ ItemActions::ItemActions(Entity* entity, Entity* parent, bool reversible)
 	this->reversible = reversible;
 }
 
-ItemActions::ItemActions(Creature* creature, Stats stattype, int value, bool reversible)
+ItemConsecuences::ItemConsecuences(Creature* creature, Stats stattype, int value, bool reversible)
 {
 	Objective = creature;
 	this->stattype = stattype;
@@ -47,11 +47,11 @@ ItemActions::ItemActions(Creature* creature, Stats stattype, int value, bool rev
 	this->reversible = reversible;
 }
 
-ItemActions::~ItemActions()
+ItemConsecuences::~ItemConsecuences()
 {
 }
 
-void ItemActions::Action()
+void ItemConsecuences::Action()
 {
 	switch (change)
 	{
@@ -70,7 +70,7 @@ void ItemActions::Action()
 	}
 }
 
-void ItemActions::EntityAction() {
+void ItemConsecuences::EntityAction() {
 	if (parent != NULL) {
 		Entity* oldparent = Objective->GetParent();
 		Objective->SetParent(parent);
@@ -94,17 +94,17 @@ void ItemActions::EntityAction() {
 	}
 }
 
-void ItemActions::ItemAction() {
+void ItemConsecuences::ItemAction() {
 	Item* item = (Item*)Objective;
 	item->pickable = !item->pickable;
 }
 
-void ItemActions::ExitAction() {
+void ItemConsecuences::ExitAction() {
 	Exits* exit = (Exits*)Objective;
 	exit->lock = !exit->lock;
 }
 
-void ItemActions::CreatureAction() {
+void ItemConsecuences::CreatureAction() {
 	Creature* creature = (Creature*)Objective;
 	creature->ChangeStat(stattype, valuestat);
 	if (reversible) valuestat = -valuestat;
