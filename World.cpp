@@ -195,8 +195,8 @@ void World::ChargeData() {
 	interaction3->AddDialogue("You give him the meat and pick up the medallion from the ground. He eats it before you can raise your head again");
 
 	ItemConsecuences* action3 = new ItemConsecuences((Entity*)medallion, player, false);
-	ItemConsecuences* action3_1 = new ItemConsecuences((Item*)medallion, false, "Coges el medallon");
-	ItemConsecuences* action3_2 = new ItemConsecuences((Entity*)hole, false, "", "Es un agujero, parece que puedes meter la mano por él pero no se si quieras... Aunque no parece haber nada dentro");
+	ItemConsecuences* action3_1 = new ItemConsecuences((Item*)medallion, false, "Pick up the medallion");
+	ItemConsecuences* action3_2 = new ItemConsecuences((Entity*)hole, false, "", "It's a hole, it looks like you can put your hand through it but I don't know if you want to... Although doesn't seem to be anything inside");
 	interaction3->Addconsecuence(action3);
 	interaction3->Addconsecuence(action3_1);
 	interaction3->Addconsecuence(action3_2);
@@ -219,52 +219,6 @@ void World::ChargeData() {
 	actualRoom = lounge;
 }
 
-
-/*TODO:
-	X Usar Items:
-		Usar un item implica cambiar stats de si mismo u otro.
-		Entonces un item tendrá un "Actions" que especifique cual de las acciones posibles hace y 
-		a quien cuando se usa sobre si mismo o sobre otro y que otro
-
-		Las acciones posibles son:
-			Desbloquear una EXIT
-			Cambiar un STAT de un personaje o el protagonista
-			Cambiar un item por otro X
-				--- No es lo mas eficaz pero todo se puede hacer cambiando por otro item ---> 
-					Cambiar un stat de un item por otro, como llenarlo con algo, abrirlo, etc.
-			Dejar un item dentro de otro (DROP ON)
-
-
-	Usar Items en OTROS Items/Exits/Player (Si es otro Item puede hacer algo o dejarlo dentro) X
-
-	X Actions with double args
-	X Tienes que poner las descripciones de cuando USAS un objeto
-	X y las limitaciones de cuando puedes usarlo y cuando no
-
-	X Desbloquear o bloquear Exits.
-	X Crear Player
-	X Consultar Stats
-
-	Poner > Cuando el Narrador habla X
-	Poner - A los items X
-	Poner un "  ->" a los items dentro de otros items cuando leo el inventario X
-
-
-	Obligatorio:
-		Al usar un item lo puedes perder (NOW) X
-		Crear NPCs con los que hablar y DAR items (8:30 a 10) X
-		Refactorizar codigo(11:30 a 12:30) X
-		
-		
-		Mas data (10 a 11)
-		Traducir al Ingles todo (11 a 11:30)
-
-
-
-		Testear Todito todito(12:30 a 13:30)
-		Probar el exe en otro ordenador(13:30 a 14:00)
-		Crear README y la sheet que me pedian(14:00 a 15:30)
-*/
 
 void World::ParseAction(vector<string> args) {
 
