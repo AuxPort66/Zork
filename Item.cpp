@@ -9,6 +9,7 @@ Item::Item(const char* name, const char* description, Entity* parent, const char
 	this->pickupDescription = pickupAction;
 	this->pickable = true;
 	this->dropable = true;
+	this->lostOnUse = false;
 }
 
 
@@ -25,6 +26,7 @@ void Item::AddAction(Action* action)
 
 void Item::UseItem(Entity* usedOn)
 {
+	bool used = false;
 	for (Action* action : actions) {
 		if (action->usedOn == usedOn) {
 			for (ItemConsecuences* consecuence : action->consecuences) {
@@ -39,7 +41,18 @@ void Item::UseItem(Entity* usedOn)
 				}
 			}
 			cout << action->useDescription << endl;
+			used = true;
 		}
+	}
+	if (used && lostOnUse) {
+		this->parent->RemoveChild(this);
+		for (Action* action : actions) {
+			for (ItemConsecuences* consecuence : action->consecuences) {
+				delete consecuence;
+			}
+			delete action;
+		}
+		delete this;
 	}
 }
 

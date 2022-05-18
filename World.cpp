@@ -15,6 +15,7 @@ void World::Start() {
 	Item* item = new Item("Piedra", "Es una piedra, parece perfecta para rebotar en el lago si sabes lanzarla", initialroom, "Tomas la piedra y la pones en el bolsillo");
 	Item* item2 = new Item("Piedra2", "Es una piedra dentro de una piedra, parece perfecta para rebotar en el lago si sabes lanzarla", item, "Tomas la piedra dentro de una piedra y la pones en el bolsillo");
 	item2->accesibleContent = false;
+	item2->lostOnUse = true;
 
 	ItemConsecuences* action = new ItemConsecuences((Entity*)item2, true);
 	Action* actionswhenUse = new Action(NULL, "Usaste la piedra2, no se como, pero eso hizo que se oyerá un click en ella");
@@ -41,37 +42,6 @@ void World::Start() {
 }
 
 
-/*TODO:
-	X Usar Items:
-		Usar un item implica cambiar stats de si mismo u otro.
-		Entonces un item tendrá un "Actions" que especifique cual de las acciones posibles hace y 
-		a quien cuando se usa sobre si mismo o sobre otro y que otro
-
-		Las acciones posibles son:
-			Desbloquear una EXIT
-			Cambiar un STAT de un personaje o el protagonista
-			Cambiar un item por otro X
-				--- No es lo mas eficaz pero todo se puede hacer cambiando por otro item ---> 
-					Cambiar un stat de un item por otro, como llenarlo con algo, abrirlo, etc.
-			Dejar un item dentro de otro (DROP ON)
-
-
-	Usar Items en OTROS Items/Exits/Player (Si es otro Item puede hacer algo o dejarlo dentro) X
-
-	X Actions with double args
-	X Tienes que poner las descripciones de cuando USAS un objeto
-	X y las limitaciones de cuando puedes usarlo y cuando no
-
-	X Desbloquear o bloquear Exits.
-	X Crear Player
-	X Consultar Stats
-	Crear NPCs con los que hablar
-	Mecanica de percepción para saber que hay detras de puertas al usar Examine or Look en una salida?
-	DataBase en un TXT
-	Mas dialogos
-	Traducir al Ingles todo X
-	Programación dinamica con hash en el nombre?
-*/
 
 void World::ParseAction(vector<string> args) {
 

@@ -144,6 +144,7 @@
     <ClCompile Include="Exits.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemConsecuences.cpp" />
+    <ClCompile Include="Npc.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="World.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="Exits.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemConsecuences.h" />
+    <ClInclude Include="Npc.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="World.h" />

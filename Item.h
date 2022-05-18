@@ -32,6 +32,7 @@ public:
 
     bool pickable;
     bool dropable;
+    bool lostOnUse;
 
 private:
     string pickupDescription;
