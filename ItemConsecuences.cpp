@@ -5,13 +5,16 @@ ItemConsecuences::ItemConsecuences(Exits* exit, bool reversible)
 	Objective = exit;
 	change = EXITS;
 	this->reversible = reversible;
+	marked = false;
 }
 
-ItemConsecuences::ItemConsecuences(Item* item, bool reversible)
+ItemConsecuences::ItemConsecuences(Item* item,string pickableDescription ,bool reversible)
 {
 	Objective = item;
 	change = ITEM;
+	this->pickableDescription = pickableDescription;
 	this->reversible = reversible;
+	marked = false;
 }
 
 ItemConsecuences::ItemConsecuences(Entity* entity, bool reversible)
@@ -19,6 +22,7 @@ ItemConsecuences::ItemConsecuences(Entity* entity, bool reversible)
 	Objective = entity;
 	change = ENTITY;
 	this->reversible = reversible;
+	marked = false;
 }
 
 ItemConsecuences::ItemConsecuences(Entity* entity, string name, string description, bool reversible)
@@ -28,6 +32,7 @@ ItemConsecuences::ItemConsecuences(Entity* entity, string name, string descripti
 	this->description = description;
 	change = ENTITY;
 	this->reversible = reversible;
+	marked = false;
 }
 
 ItemConsecuences::ItemConsecuences(Entity* entity, Entity* parent, bool reversible)
@@ -36,6 +41,7 @@ ItemConsecuences::ItemConsecuences(Entity* entity, Entity* parent, bool reversib
 	this->parent = parent;
 	change = ENTITY;
 	this->reversible = reversible;
+	marked = false;
 }
 
 ItemConsecuences::ItemConsecuences(Creature* creature, Stats stattype, int value, bool reversible)
@@ -45,6 +51,7 @@ ItemConsecuences::ItemConsecuences(Creature* creature, Stats stattype, int value
 	this->valuestat = value;
 	change = CREATURE;
 	this->reversible = reversible;
+	marked = false;
 }
 
 ItemConsecuences::~ItemConsecuences()
@@ -73,7 +80,8 @@ void ItemConsecuences::Action()
 void ItemConsecuences::EntityAction() {
 	if (parent != NULL) {
 		Entity* oldparent = Objective->GetParent();
-		Objective->SetParent(parent);
+		oldparent->RemoveChild(Objective);
+		parent->AddChild(Objective);
 		if (reversible) parent = oldparent;
 	}
 	else if (name != "" || description != "") {
@@ -96,7 +104,13 @@ void ItemConsecuences::EntityAction() {
 
 void ItemConsecuences::ItemAction() {
 	Item* item = (Item*)Objective;
-	item->pickable = !item->pickable;
+	string oldDescription = item->GetPickupActionDescription();
+	item->reachable = !item->reachable;
+	if (pickableDescription != "") {
+		item->SetPickupActionDescription(pickableDescription);
+		pickableDescription = oldDescription;
+	}
+
 }
 
 void ItemConsecuences::ExitAction() {

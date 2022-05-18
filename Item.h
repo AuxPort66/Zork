@@ -6,12 +6,14 @@ class ItemConsecuences;
 
 struct Action {
     Entity* usedOn;
+    Entity* positionofusedOn;
     list<ItemConsecuences*> consecuences;
     string useDescription;
 
     Action(Entity* usedOn,const char* useDescription) {
         this->usedOn = usedOn;
         this->useDescription = useDescription;
+        this->positionofusedOn = NULL;
     }
 
     void Addconsecuence(ItemConsecuences* consecuence) {
@@ -25,10 +27,14 @@ class Item :
 public:
     Item(const char* name, const char* description, Entity* parent, const char* pickupAction);
     string GetPickupActionDescription();
+    void SetPickupActionDescription(string pickupDescription);
 
     void AddAction(Action* action);
 
     void UseItem(Entity* usedOn);
+
+    list<Action*> GetActions();
+
 
     bool pickable;
     bool dropable;

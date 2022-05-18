@@ -6,7 +6,7 @@
 using namespace std;
 
 enum Type {
-	ENTITY, ROOM, ITEM, EXITS, CREATURE, PLAYER
+	ENTITY, ROOM, ITEM, EXITS, CREATURE, PLAYER, NPC
 };
 
 class Entity
@@ -34,6 +34,7 @@ public:
 	string name;
 	Type type;
 	bool accesibleContent;
+	bool reachable;
 
 protected:
 

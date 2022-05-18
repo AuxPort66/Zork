@@ -9,7 +9,7 @@ class ItemConsecuences
 {
 public:
 	ItemConsecuences(Exits* exit, bool reversible); //Open a Exit
-	ItemConsecuences(Item* item, bool reversible); //Pickable item
+	ItemConsecuences(Item* item, string pickableDescription, bool reversible); //Pickable Item
 	ItemConsecuences(Entity* entity, bool reversible); //Change accesibility content
 
 
@@ -30,15 +30,17 @@ public:
 	void CreatureAction();
 
 	bool reversible;
-
+	bool marked;
 private:
 	Entity* Objective;
 	Type change;
 	string name = "";
 	string description = "";
+	string pickableDescription = "";
 	Entity* parent = NULL;
 	Stats stattype = HP;
 	int valuestat = NULL;
+
 };
 
 #endif // __ItemConsecuences__

@@ -19,25 +19,25 @@ int main()
 
 	while (true)
 	{
-		if (_kbhit()) {
+		string read;
 
-			string read;
-
-			getline(cin, read);
-			stringstream action(read);
-			string tmp;
-			args.clear();
-			while (getline(action, tmp,' '))
+		getline(cin, read);
+		stringstream action(read);
+		string tmp;
+		args.clear();
+		while (getline(action, tmp,' '))
+		{
+			tmp[0] = toupper(tmp[0]);
+			for (int i = 1; i < tmp.size(); i++)
 			{
-				tmp[0] = toupper(tmp[0]);
-				for (int i = 1; i < tmp.size(); i++)
-				{
-					tmp[i] = tolower(tmp[i]);
-				}
-				if (tmp != "Into" && tmp != "On" && tmp != "To" && tmp != "Through" && tmp != "In" && tmp != "The") args.push_back(tmp);
+				tmp[i] = tolower(tmp[i]);
 			}
-			game.ParseAction(args);
+			if (tmp != "Into" && tmp != "On" && tmp != "To" && tmp != "Through" && tmp != "In" && tmp != "The" && tmp != "With") args.push_back(tmp);
 		}
+
+		cout << "----------------------------------------------" << endl;
+		game.ParseAction(args);
+		cout << "----------------------------------------------" << endl;
 	}
 
 }

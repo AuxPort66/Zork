@@ -18,33 +18,43 @@ string Item::GetPickupActionDescription()
 	return pickupDescription;
 }
 
+void Item::SetPickupActionDescription(string pickupDescription)
+{
+	this->pickupDescription = pickupDescription;
+}
+
 void Item::AddAction(Action* action)
 {
 	actions.push_back(action);
 }
-
 
 void Item::UseItem(Entity* usedOn)
 {
 	bool used = false;
 	for (Action* action : actions) {
 		if (action->usedOn == usedOn) {
-			for (ItemConsecuences* consecuence : action->consecuences) {
-				consecuence->Action();
-				if (!consecuence->reversible) {
-					action->consecuences.remove(consecuence);
-					delete consecuence;
-					if (action->consecuences.size() == 0) {
-						actions.remove(action);
-						delete action;
+			if ((action->positionofusedOn == NULL || (action->positionofusedOn == usedOn->GetParent()))) {
+				for (ItemConsecuences* consecuence : action->consecuences) {
+					if (!consecuence->marked) {
+						consecuence->Action();
+						used = true;
+					}
+					if (!consecuence->reversible) {
+						consecuence->marked = true;
 					}
 				}
+				if (used) {
+					cout << ">> " << action->useDescription << endl;
+				}
 			}
-			cout << action->useDescription << endl;
-			used = true;
+			else {
+				cout << ">> Not here!" << endl;
+				used = true;
+			}
 		}
 	}
-	if (used && lostOnUse) {
+	if (!used) cout << ">> That do nothing" << endl;
+	else if (lostOnUse) {
 		this->parent->RemoveChild(this);
 		for (Action* action : actions) {
 			for (ItemConsecuences* consecuence : action->consecuences) {
@@ -54,6 +64,13 @@ void Item::UseItem(Entity* usedOn)
 		}
 		delete this;
 	}
+
+	
+}
+
+list<Action*> Item::GetActions()
+{
+	return actions;
 }
 
 

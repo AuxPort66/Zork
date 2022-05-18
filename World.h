@@ -2,7 +2,6 @@
 #define __World__
 #include <vector>
 #include <string>
-#include <iostream>
 #include "Entity.h"
 #include "Room.h"
 #include "Exits.h"
@@ -20,11 +19,11 @@ public:
 	void Go(string destino);
 	void Pick(string name);
 	void Drop(string dropped, string container);
-	void Inventory(Entity* inventory);
+	void Inventory(Entity* inventory, int layer);
 	void PrintRoom(Room* room);
 	void PrintStats(Creature* creature);
 private:
-	vector<Entity> map;
+	vector<Entity*> wholeExistance;
 	Room* actualRoom;
 	Player* player;
 
