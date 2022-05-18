@@ -60,7 +60,35 @@ void World::Start() {
 	wholeExistance.push_back(item3);
 	wholeExistance.push_back(item4);
 
+	Npc* npc1 = new Npc("Bird", "A gray owl, it seems quite calm and is not bothered by your presence. She ignores you meanwhile preens her feathers and if you stare at her  enough time you see her turning her head in a funny way. Owl's things.", initialroom);
 	
+	Interaction* interaction = new Interaction(NULL);
+	interaction->AddDialogue("El ave te mira cuando le dices hola, no está muy seguro de lo que pasa pero hace un pequeño ruido gutural hinchando el pecho. Parece querer decir que es mejor que tú");
+	interaction->AddDialogue("Aunque luego de unos segundos se cansa y te mira como si ni mereciese la pena esforzarse por parecer mas poderoso que tu. Creo que he visto rintintin en su mirada");
+	interaction->repetible = false;
+
+	Interaction* interaction2 = new Interaction(NULL);
+	interaction2->AddDialogue("Tras esa competición tan corta el ave ya ni se molesta en mirarte");
+
+	Interaction* interaction3 = new Interaction(item2);
+	interaction3->AddDialogue("Le acercas el trozo de carne al ave y está parece desconfiar al principio, aunque no tarda casi nada en intentar devorarlo, aunque apartas el trozo de carne a tiempo.");
+	interaction3->AddDialogue("El ave te vuelve a mirar entrecerrando los ojos. Claramente eso no le ha gustado, sin embargo emprende el vuelo y se mete en el agujero de la pared. Tras unos segundos vuelve con el medallon tirandolo a tu lado.");
+	interaction3->AddDialogue("Le das la carne y recoges el medallon del suelo. Se lo come antes de que puedas volver a levantar la cabeza");
+
+	ItemConsecuences* action3 = new ItemConsecuences((Entity*)item3,player,false);
+	ItemConsecuences* action3_1 = new ItemConsecuences((Item*)item3,"Coges el medallon", false);
+	ItemConsecuences* action3_2 = new ItemConsecuences((Entity*)item, "", "Es un agujero, parece que puedes meter la mano por él pero no se si quieras... Aunque no parece haber nada dentro", false);
+	interaction3->Addconsecuence(action3);
+	interaction3->Addconsecuence(action3_1);
+	interaction3->Addconsecuence(action3_2);
+	interaction3->repetible = false;
+
+
+	npc1->AddInteraction(interaction);
+	npc1->AddInteraction(interaction3);
+	npc1->AddInteraction(interaction2);
+
+	wholeExistance.push_back(npc1);
 
 	actualRoom = initialroom;
 
@@ -69,6 +97,8 @@ void World::Start() {
 	Examine("Room");
 	cout << "----------------------------------------------" << endl;
 }
+
+
 
 
 void World::ParseAction(vector<string> args) {
@@ -104,7 +134,16 @@ void World::ParseAction(vector<string> args) {
 		else if (args.size() == 2) Use(args[1], "");
 		else cout << ">> Use what? that? or that? Or that other thing? Which?!" << endl;
 	}
-	
+	else if (args[0] == "Give") {
+		if (args.size() > 2) Give(args[1], args[2]);
+		else cout << ">> Give what? to who?" << endl;
+	}
+	else if (args[0] == "Talk") {
+		if (args.size() > 2) cout << ">> Ok, that was confusing. Decide, Talk with who?" << endl;
+		else if (args.size() == 2) Talk(args[1]);
+		else cout << ">> Me? Well, I don't like to talk about me, but I consider myself a great storyteller and an adventurous voice." <<
+			"I can tell you a couple of things about it. When I was young... *3 hours later*" << endl;
+	}
 	else if (args[0] == "Inventory") {
 		if (player->Getcontent().size() > 0) Inventory(player,0);
 		else cout << ">> You have fewer things than me, which is already saying a lot considering that I am just a text without a body" << endl;
@@ -152,7 +191,52 @@ void World::Use(string nameObjectUsed, string nameObjectUsedOn) {
 	}
 }
 
+void World::Give(string nameObjectgiven, string nameNpc) {
 
+	Item* itemUsed = (Item*)player->CheckifContains(nameObjectgiven);
+
+	if (itemUsed != NULL) {
+			if (itemUsed->type == ITEM && itemUsed->reachable) {
+				
+				Npc* npcUsedOn = (Npc*)actualRoom->CheckifContains(nameNpc);
+
+				if (npcUsedOn != NULL) {
+					if(npcUsedOn->reachable)npcUsedOn->ActiveInteraction(itemUsed);
+					else cout << ">> Can you explain to me how you will give that, exactly?" << endl;
+				}
+				else
+				{
+					cout << ">> You want to give that to who?" << endl;
+				}
+			}
+			else {
+				cout << ">> Can you explain to me how you will give that, exactly?" << endl;
+			}
+	}
+	else {
+		cout << ">> Give what?" << endl;
+	}
+
+
+
+}
+
+void World::Talk(string nameNpc) {
+	Npc* npc = (Npc*)actualRoom->CheckifContains(nameNpc);
+
+	if (npc != NULL) {
+		if (npc->type == NPC) {
+			npc->ActiveInteraction(NULL);
+		}
+		else
+		{
+			cout << ">> You can talk to... that" << endl;
+		}
+	}
+	else {
+		cout << ">> Talk to who?" << endl;
+	}
+}
 
 void World::Examine(string name) {
 
