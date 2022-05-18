@@ -1,7 +1,0 @@
-﻿  Item.cpp
-  ItemConsecuences.cpp
-  World.cpp
-  Zork.cpp
-C:\Users\Sara\source\repos\Zork\Zork\Zork.cpp(33,23): warning C4018: '<': no coinciden signed/unsigned
-  Generando código...
-  Zork.vcxproj -> C:\Users\Sara\source\repos\Zork\Debug\Zork.exe
