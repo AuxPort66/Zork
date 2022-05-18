@@ -6,7 +6,7 @@ I have expanded the game a bit by putting npcs to talk to and give items. And a 
 
 The hardest part was making the full database, to be honest it was a bit long for the time I had.
 
-Author: Sara Izquierdo(@AuxPort66)
+Author: Sara Izquierdo([@AuxPort66](https://github.com/AuxPort66))
 
 ## Installation
 
