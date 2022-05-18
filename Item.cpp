@@ -11,6 +11,7 @@ Item::Item(const char* name, Entity* parent, const char* description) : Entity(n
 	this->dropable = true;
 	this->lostOnUse = false;
 	this->usedWhenPick = false;
+	this->noCapacity = true;
 }
 
 Item::~Item()

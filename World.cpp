@@ -48,6 +48,7 @@ void World::ChargeData() {
 
 	Item* tableLounge = new Item("Table",lounge,"A large wooden table with some dust, it has only a red \033[1;33m book\033[0m on it. It seems that it has some papers inside and it is the cleanest thing in the place");
 	tableLounge->pickable = false;
+	tableLounge->noCapacity = false;
 
 	Item* book = new Item("Book", tableLounge, "A red \033[1;33m book\033[0m with a couple of papers inside, in one of them you can see a draw, two triangles forming an hourglass.");
 	book->usedWhenPick = true;
@@ -60,6 +61,7 @@ void World::ChargeData() {
 
 	Item* bookcase = new Item("Bookcase",lounge, "An almost empty shelf, has a couple of misplaced books and anything else");
 	bookcase->pickable = false;
+	bookcase->noCapacity = false;
 
 	wholeExistance.push_back(tableLounge);
 	wholeExistance.push_back(bookcase);
@@ -74,6 +76,8 @@ void World::ChargeData() {
 
 	Item* fridge = new Item("Fridge", kitchen, "An almost empty fridge. It has a peace of \033[1;33m meat\033[0m, a \033[1;33m pizza\033[0m and a \033[1;33m bottle\033[0m");
 	fridge->pickable = false;
+	fridge->noCapacity = false;
+
 
 	Item* meat = new Item("Meat", fridge, "It's a piece of \033[1;33m meat\033[0m that you took out of the fridge, the only thing that was left inside");
 	meat->SetPickupActionDescription("You take the piece of meat, it's half day from not being edible anymore, but maybe it's useful for something");
@@ -91,6 +95,8 @@ void World::ChargeData() {
 
 	Item* trash = new Item("Trash", kitchen, "A trash bin");
 	trash->pickable = false;
+	trash->noCapacity = false;
+
 
 	Item* corpse = new Item("Corpse", kitchen, "The body of a middle-aged man. He appears to have a lighter in his pocket. He has a claw-shaped wound on his neck, the outline is bluish. His hands are stained with something gray, like ash or dust.");
 	corpse->pickable = false;
@@ -134,6 +140,8 @@ void World::ChargeData() {
 
 	Item* closet = new Item("Closet", bathroom, "A closet, the top looks scratched. When you look out you see a \033[1;33m hole\033[0m in the wall.");
 	closet->pickable = false;
+	closet->noCapacity = false;
+
 
 	Item* hole = new Item("Hole", closet, "It's a hole, it looks like you can put your hand through it but I don't know if you want to... It also seems pretty deep. Although in the background I think there is a kind of \033[1;33m medallion\033[0m but you don't reach");
 	hole->pickable = false;
@@ -492,7 +500,7 @@ void World::Drop(string dropped, string container ) {
 					Item* itemContainer = (Item*)actualRoom->CheckifContains(container);
 					if (itemContainer == NULL) Item* itemContainer = (Item*)player->CheckifContains(container);
 					if (itemContainer != NULL) {
-						if (itemContainer->accesibleContent) {
+						if (itemContainer->accesibleContent && !itemContainer->noCapacity) {
 							cout << ">> Drop " << itemDropped->name << " on " << itemContainer->name << endl;
 							string pickdescription = "You pick up " + itemDropped->name;
 							if(itemContainer->type != Type::ROOM)string pickdescription = "Pick up " + itemDropped->name + " of " + itemContainer->name;

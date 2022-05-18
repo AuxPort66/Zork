@@ -39,6 +39,8 @@ public:
     bool lostOnUse;
     bool usedWhenPick;
 
+    bool noCapacity;
+
 private:
     string pickupDescription;
     list<Action*> actions;
